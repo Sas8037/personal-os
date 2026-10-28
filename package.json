@@ -1,0 +1,16 @@
+{
+  "name": "personal-os",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "typecheck:desktop-shell": "tsc --noEmit --jsx react-jsx --moduleResolution bundler --module esnext --target es2022 --esModuleInterop --skipLibCheck packages/desktop-shell/src/DesktopShell.tsx packages/desktop-shell/src/index.ts"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  }
+}
