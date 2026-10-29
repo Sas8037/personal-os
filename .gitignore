@@ -3,3 +3,4 @@ node_modules/
 
 # Generated desktop-shell build output
 /packages/desktop-shell/dist/
+/apps/web/dist/
