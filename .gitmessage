@@ -1,0 +1,18 @@
+# Replace guidance with factual content; do not commit placeholder text.
+# Subject: type(scope): imperative summary (aim for 72 characters or fewer)
+# Brief summary: explain what changed and why.
+#
+# Changes:
+# - Describe meaningful scope, behavior, or decisions.
+#
+# Verification:
+# - Name checks actually performed and their results.
+# - Attribute prior owner-reported evidence; state material unverified limits.
+#
+# Impact: include compatibility, risks, or operational effects when relevant.
+#
+# Refs: IMP-### (replace with a real applicable ID, or omit)
+#
+# Keep trivial changes concise; expand architectural/security/build changes.
+# Remove unused sections. See docs/DEVELOPMENT-WORKFLOW.md for details.
+# Comment-only content is guidance, not a commit message; write your own text.
