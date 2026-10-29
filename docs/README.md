@@ -8,40 +8,48 @@ This is the navigation hub for Personal OS engineering documentation. The projec
 
 | Document | Purpose | Review state |
 | --- | --- | --- |
-| [Repository README](../README.md) | Project introduction, working prototype and developer quick start | Living entry point |
-| **Documentation Index** (this file) | Navigation and documentation inventory | Living index |
+| [Repository README](../README.md) | Project vision, verified checkout inventory and current developer commands | Living entry point |
+| [Documentation Index](README.md) (this file) | Navigation and documentation inventory | Living index |
 | [Documentation Guide](DOCUMENTATION-GUIDE.md) | Naming, IDs, frontmatter, statuses, links and review rules | Living policy |
 | [PWOS-001 — Project Charter](foundation/PWOS-001-project-charter.md) | Objectives, target direction, project scope, staged delivery, risks and owner approval | v0.12 — Accepted (2026-10-28) |
 | [PWOS-002 — System Architecture Foundation](architecture/PWOS-002-system-architecture-foundation.md) | System layers, component ownership and eight approved architectural decisions | v0.2 — Accepted (2026-10-27) |
 
-### Developer guides
+### Supplementary documentation (non-governing)
 
 | Guide | Purpose |
 | --- | --- |
 | [Shared Packages Guide](../packages/README.md) | Current and proposed shared packages, public API boundaries, dependency rules and package development workflow |
 | [Improvement Register](IMPROVEMENTS.md) | Living prioritized ideas, tradeoffs, owner decision gates and verification evidence (non-governing) |
+| [File Registry](FILE-REGISTRY.md) | Living inventory of actual files, Git tracking states, Current/Planned/Historical classifications, responsibilities and relationships |
+| [Development Workflow](DEVELOPMENT-WORKFLOW.md) | Edit, verify, review, stage, commit, push and confirmation standard, including Conventional Commits |
 
 The [project README](../README.md#proposed-github-pages-preview) describes the proposed GitHub Pages **static demo** profile and its separation from private Raspberry Pi hosting. This is a deployment proposal, not a sixth governing specification or a completed deployment.
 
-Files remaining from earlier planning iterations outside this inventory do **not** become approved specifications merely by existing. The prior System Requirements draft that once used PWOS-002 has been preserved at [historical requirements draft](archive/legacy-system-requirements-2026-10-26.md) as non-governing material; **PWOS-002 now identifies the new architecture foundation**.
+The files currently inside `docs/` are this index, `DOCUMENTATION-GUIDE.md`, `IMPROVEMENTS.md`, `FILE-REGISTRY.md`, `DEVELOPMENT-WORKFLOW.md`, `foundation/PWOS-001-project-charter.md`, and `architecture/PWOS-002-system-architecture-foundation.md`. The governing table also includes the root README outside this directory; the Shared Packages Guide is supplementary and lives outside `docs/`.
+
+No `docs/archive/` or historical requirements draft exists in this checkout. Earlier use of the PWOS-002 identifier for requirements is historical; **PWOS-002 identifies the accepted architecture foundation**. Planned documents are listed separately below and have no index links until they exist.
 
 ## Recommended reading order
 
-1. Start with the [repository README](../README.md) to see the current code and how to launch it.
+1. Start with the [repository README](../README.md) for the actual checkout inventory, verified shell commands, and browser-host limitations.
 2. Read [PWOS-001](foundation/PWOS-001-project-charter.md) for the vision, boundaries and the **D0–D4 use-from-day-one delivery path**.
 3. Read [PWOS-002](architecture/PWOS-002-system-architecture-foundation.md) for the accepted system-layer design, dependencies, app lifecycle and trust boundaries.
 4. Use the [Documentation Guide](DOCUMENTATION-GUIDE.md) when writing, reviewing or updating documents.
 5. Consult the [Shared Packages Guide](../packages/README.md) before adding shared code or extracting a system module.
 6. Review the [Improvement Register](IMPROVEMENTS.md) for proposed enhancements and decisions worth discussing before implementation.
-7. Return to this index for the current governing document inventory.
+7. Consult the [File Registry](FILE-REGISTRY.md) for file existence, tracking states, responsibilities and relationships; check the actual checkout when its snapshot needs refreshing.
+8. Follow the [Development Workflow](DEVELOPMENT-WORKFLOW.md) for reviewed edits, Conventional Commits, staging and publication.
+9. Return to this index for governing and supplementary navigation.
 
 ## What we are working on
 
-The repository snapshot includes an earlier modular React/Vite browser starter (`apps/web/src/shell/`), shared TypeScript settings/UI tokens, and a Node.js/Fastify status API. **Current implementation work begins with `packages/desktop-shell/`, independently of the web host**: its manifest, public `src/index.ts` component/type exports, and standalone `DesktopShell.tsx` layout exist. The owner verified npm workspace installation and desktop-shell TypeScript checking in Codespaces on **2026-10-28**. The package still needs a declared manifest `exports` map, and **the new shell is not yet rendered by a browser host or available at a preview URL**. The accepted target keeps `apps/web` thin and owns application hosting in a separate runtime package. Independent apps and `@personal-os/app-sdk`/`@personal-os/os-api` working interfaces remain planned. See the [Shared Packages Guide](../packages/README.md). Real personal storage, secure sign-in, local AI inference and an original kernel are not implemented.
+The reusable `packages/desktop-shell` package has passed strict TypeScript checking, compilation, public JavaScript/type export resolution, and source/declaration map generation (IMP-002, verified 2026-10-29). It provides a standalone presentation frame and public types. `apps/web` currently contains only `package.json`; web dependency installation, HTML entry, configuration, source, and browser integration remain pending. No browser preview is running.
+
+IMP-001, the first browser preview, remains the next implementation priority. The accepted architecture keeps the web host thin, application lifecycle in a future runtime package, and privileged authorization in trusted backends. Independent apps, SDK/OS API contracts, real storage, sign-in, local AI, and kernel implementation remain planned. Use the [Shared Packages Guide](../packages/README.md) for package details and the [repository README](../README.md) for setup commands rather than treating architecture plans as a source-tree inventory.
 
 | Stage | Practical user outcome | Current standing |
 | --- | --- | --- |
-| **D0 — Day-one desktop** | Launch a browser desktop, open/close placeholders, inspect system status | Workspace install and shell type check verified; source exports exist; no runnable browser preview yet; optional Pages demo proposed |
+| **D0 — Day-one desktop** | Launch a browser desktop, open/close placeholders, inspect system status | Shell strict type check, build and public exports verified; web host manifest only, dependency installation/integration pending; no preview running; optional Pages demo proposed |
 | **D1 — Useful local workspace** | Use one real in-house notes/tasks-style app with non-sensitive persistence | Planned |
 | **D2 — Private Pi alpha** | Authenticated owner storage with tested backup and restore on the Pi | Planned |
 | **D3 — Local AI alpha** | Offline inference through an authorized assistant UI | Planned |
@@ -68,9 +76,9 @@ Introduce a new document only when it has a defined purpose, an owner review dec
 1. Check that the charter and both README files describe the same project scope and phase.
 2. Distinguish **document review status** from engineering **implementation and verification**.
 3. Use relative links; do not treat planned directories as proof of working functionality.
-4. Run `node scripts/lint-docs.mjs` when the documentation checker exists in your checkout. Reintroduce a root `docs:check` script before requiring it in CI. The checker validates supported metadata, filenames and local links, not the factual correctness of the design.
+4. Check local links against actual files and review diffs. This checkout has no `scripts/` directory, `scripts/lint-docs.mjs`, root `docs:check` command, or `.github/workflows/` CI configuration. Documentation automation remains proposed (IMP-008); do not present those tools as available checks.
 5. For each document update, record which other documents need synchronization, what remains improvable and the next agreed work item.
 
 ## Next action
 
-**Before implementation**, review the proposed public-demo isolation rules, static asset/base-path strategy, GitHub Pages visibility, and deployment verification gates. Then continue one file at a time: package TypeScript configuration and exports, browser host, local Codespaces smoke test, and optionally a GitHub Pages deployment. The Pages demo does not replace private Pi deployment or the accepted D0 gate.
+**Next implementation priority: IMP-001.** Continue one file at a time from the manifest-only `apps/web` host: install declared dependencies, add minimal host files, render the shell through its verified public package entry, then check rendering and reload through a Codespaces preview. IMP-002 package configuration is complete. Any public Pages demo requires separate approval of isolation, visibility, routing, and deployment checks; it does not replace the local D0 browser gate or private Pi deployment work.
