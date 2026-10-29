@@ -109,36 +109,95 @@ Use `type(scope): imperative summary`. Keep the subject concise (aim for 72 char
 
 Useful scopes are `web`, `shell`, `runtime`, `api`, `docs`, `registry`, `repo`, `kernel`, `storage`, and `ai`. Scopes identify responsibility, not implementation status: the shell exists, the web host is manifest-only, and runtime/API/kernel/storage/AI implementations remain Planned. Select the narrowest useful scope; use `repo` for a genuinely repository-wide logical change.
 
-Separate the optional body from the subject with a blank line. Explain the problem, resulting behavior, meaningful constraints, and verification where useful; do not merely list filenames. Separate footers from the body with a blank line. Use `Refs: IMP-015` for traceability. Reserve `BREAKING CHANGE: ...` and a subject `!` for actual incompatible public changes, with migration details. IMP references do not close or approve register entries automatically; update status based on evidence and owner decisions.
+Separate the body from the subject with a blank line. Use the following recommended structure, scaling detail to the change:
 
-Illustrative messages using existing IMP identifiers (not claims that the work is committed or approved):
+1. **Subject:** `type(scope): imperative summary`.
+2. **Brief summary:** Explain what changed and why it was needed.
+3. **Changes:** Describe meaningful behavior, scope, and implementation decisions.
+4. **Verification:** Identify checks actually performed and their results.
+5. **Impact:** Where relevant, explain compatibility, operational effects, risks, and limitations.
+6. **Refs footer:** Reference applicable stable improvement IDs, such as `Refs: IMP-018`, separated from the body by a blank line.
 
-```text
-build(shell): expose compiled desktop shell entry points
+Use factual, specific descriptions. Avoid generic boilerplate such as “improve code quality” or “all tests pass” without naming the relevant change or checks. Do not fill sections merely to satisfy a template. Trivial edits can use a concise body with the relevant verification; architectural, security, build, or repository-wide changes warrant more detailed reasoning, evidence, and impact. Wrap body text for readability and use short lists when they make parallel changes or checks easier to review.
 
-Provide the public JavaScript and type declaration targets.
-Verification: package typecheck and build passed in the recorded IMP-002 work.
+Verification must distinguish fresh tests from prior owner-reported evidence. Name the actual command or manual review, its scope, and the observed result. Attribute earlier results and dates where useful; never imply they were rerun. If no tests were run, say so and explain the relevant verification used instead. State material unverified capabilities, skipped checks, failures, and limitations. Local type checking, compilation, browser testing, and CI are separate evidence; none substitutes for another.
 
-Refs: IMP-002
-```
+Reserve `BREAKING CHANGE: ...` and a subject `!` for actual incompatible public changes, with migration details. IMP references do not close or approve register entries automatically; update status based on evidence and owner decisions. Examples below use real IMP identifiers and illustrate recorded work, not commands to execute or proof that checks were performed in a new task. Replace example evidence with actual results when writing a new commit.
+
+Documentation example:
 
 ```text
 docs(docs): distinguish current files from planned architecture
 
-Replace historical starter claims with checkout-backed descriptions.
+Replace historical starter claims with checkout-backed descriptions so
+readers can distinguish implemented files from future design.
+
+Changes:
+- Separate Current, Planned and Historical inventory entries.
+- Remove links to absent starter files.
+
+Verification:
+- Check local documentation links and referenced checkout paths.
+- Review the complete staged diff and pass whitespace checks.
+- No compiler or browser tests run for this documentation change.
+
+Impact:
+- Clarify implementation status without changing accepted architecture.
 
 Refs: IMP-015
 ```
 
-```text
-chore(repo): stop tracking installed dependency files
+Implementation/build example:
 
-Preserve local dependencies and verify the staged scope before committing.
+```text
+build(shell): expose compiled desktop shell entry points
+
+Make the reusable shell consumable through its public package name
+with a strict, repeatable TypeScript build.
+
+Changes:
+- Add package compiler configuration and build/typecheck scripts.
+- Expose compiled JavaScript and declaration entry points.
+- Generate source and declaration maps for debugging.
+
+Verification:
+- Prior owner-reported IMP-002 evidence records successful shell
+  type checking, build and public entry resolution on 2026-10-29.
+- Those checks were not rerun for this illustrative message.
+
+Impact:
+- Target a bundler-based frontend host.
+- Browser rendering and full host integration remain unverified.
+
+Refs: IMP-002
+```
+
+Repository-maintenance example, reflecting the completed index cleanup:
+
+```text
+chore(repo): stop tracking installed dependencies
+
+Remove installed dependencies from the repository baseline while
+preserving the local installation and reproducible root lockfile.
+
+Changes:
+- Remove 259 node_modules entries from Git tracking only.
+- Leave project source, manifests and lockfile unchanged.
+
+Verification:
+- The recorded cleanup checked zero remaining tracked entries and
+  unchanged contents/targets for 531 local dependency files and links.
+- Shell typecheck, shell build and workspace resolution passed during
+  that cleanup; these are prior results, not fresh tests for this example.
+- The complete staged patch contained only dependency deletions and
+  passed whitespace checks.
+
+Impact:
+- Keep installed dependencies local under existing ignore rules.
+- Make no claim of browser testing or CI verification.
 
 Refs: IMP-017
 ```
-
-The IMP-017 example is conditional on future approval; cleanup remains Candidate.
 
 ## Branches, grouping, and pull requests
 
