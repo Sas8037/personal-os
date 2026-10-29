@@ -236,6 +236,21 @@ node scripts/lint-docs.mjs
 
 The check validates documentation format and references, not the technical truth of its claims. Human review remains necessary for correctness, completeness, and feasibility.
 
+## Improvement register maintenance
+
+The non-governing [Personal OS Improvement Register](IMPROVEMENTS.md) is the single backlog for optional enhancements, discovered weaknesses, and follow-up engineering work. It **does not** change the five-document governing baseline or approve an architecture change by itself.
+
+Whenever a project file or document is created, changed, or reviewed:
+
+1. Review the register and add or revise relevant `IMP-###` entries. Do not reuse identifiers.
+2. Record the proposed change, measurable benefit, costs and risks, priority, status, and acceptance evidence.
+3. Use **Approved** only after the project owner explicitly accepts the proposal. Code added or documentation edited does not by itself mean an improvement is verified.
+4. Highlight high-impact recommendations **before starting the next implementation step**, especially changes that affect architecture, security or public deployment.
+5. Synchronize the relevant project README or governing document only when its stated responsibilities, status or approved design have actually changed.
+6. In every change handoff, state which files were updated, which others still need updating (or **none**), what can be improved, and the proposed next file or task.
+
+Proposed architectural changes must follow the review and approval processes in [PWOS-001](foundation/PWOS-001-project-charter.md) and [PWOS-002](architecture/PWOS-002-system-architecture-foundation.md), regardless of their status in the improvement register.
+
 ## Cross-document synchronization and handoff
 
 For every document that is created or revised, the accompanying handoff should state:

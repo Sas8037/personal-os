@@ -4,8 +4,8 @@
  * The shell is designed to be hosted by a browser or another frontend later.
  * It does not depend on an existing apps/web implementation.
  *
- * Components will be exported from this file when implemented. Until then,
- * only a small, presentation-only status contract is available.
+ * Hosts import the desktop frame and its public types from this entry point,
+ * without depending on private implementation paths.
  */
 
 /** Host-observed connectivity for display only; never an authorization signal. */
@@ -16,3 +16,6 @@ export interface DesktopShellStatus {
   readonly connection: DesktopConnectionState;
   readonly message?: string;
 }
+
+export { DesktopShell } from './DesktopShell';
+export type { DesktopShellProps } from './DesktopShell';

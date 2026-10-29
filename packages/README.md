@@ -2,13 +2,15 @@
 
 The `packages/` workspace contains reusable Personal OS components, public application contracts, and development tooling. These modules support the web-native system today and are designed to remain useful as Personal OS explores hybrid, virtual, and native execution environments.
 
+The shared desktop shell must remain **deployment-neutral**: no imports from a GitHub Pages-only web host, no hardcoded `github.io` paths, and no direct knowledge of Pi addresses or privileged credentials. A future frontend host chooses a deployment profile (public mock/demo or private authenticated service) and provides only the capabilities available in that environment. A missing backend must be presented as unavailable rather than silently treated as authorized or operational.
+
 **Architecture authority:** [PWOS-002 — System Architecture Foundation](../docs/architecture/PWOS-002-system-architecture-foundation.md). This README explains package organization and development practices; it does not supersede approved architectural decisions.
 
 ## Package directory
 
 | Package | Import name | Purpose | Current state |
 | --- | --- | --- | --- |
-| [`desktop-shell/`](desktop-shell/) | `@personal-os/desktop-shell` | Reusable desktop, window management, dock, launcher, panels, and widgets | Manifest, type-only entry point, and standalone `src/DesktopShell.tsx` layout exist; TypeScript check passes in Codespaces; component not re-exported or host-integrated |
+| [`desktop-shell/`](desktop-shell/) | `@personal-os/desktop-shell` | Reusable desktop, window management, dock, launcher, panels, and widgets | Manifest, `src/index.ts` exports, and standalone `src/DesktopShell.tsx` layout exist; TypeScript check passes in Codespaces; package `exports` map and browser host integration pending |
 | `app-runtime/` | `@personal-os/app-runtime` (proposed) | Application discovery, lifecycle, host integration, and isolation coordination | Planned; directory not yet created |
 | [`app-sdk/`](app-sdk/) | `@personal-os/app-sdk` | Public app-facing interfaces, manifest types, and lifecycle contracts | Reserved package identity; API not implemented |
 | [`os-api/`](os-api/) | `@personal-os/os-api` | Backend-neutral system service contracts and errors | Reserved package identity; API not implemented |
@@ -74,9 +76,10 @@ Commit the generated root `package-lock.json` for reproducible installs; do not 
 
 Work is intentionally proceeding **one repository file at a time**:
 
-1. Establish the `desktop-shell` package's public boundary (**started** with `src/index.ts` and a compiled `DesktopShell.tsx`; no runtime exports yet).
-2. Export and expand the reusable shell independently of any frontend host.
-3. Integrate a web host through public package interfaces when host work begins; preserve any pre-existing starter if migrating it.
-4. Introduce the application runtime and app-facing contracts behind tested behavior.
+1. Establish the `desktop-shell` source-level public boundary (**done**: `src/index.ts` re-exports `DesktopShell` and its props; package-name resolution still requires a manifest `exports` map).
+2. Add package-specific TypeScript configuration and manifest exports.
+3. Integrate a web host through public package interfaces to make the shell visible in the browser; preserve any pre-existing starter if migrating it.
+4. Provide a public static demo profile for GitHub Pages with mock data, while keeping owner-private Pi services out of that build.
+5. Introduce the application runtime and app-facing contracts behind tested behavior.
 
 This sequence describes intent, not completed functionality. See [PWOS-001 — Project Charter](../docs/foundation/PWOS-001-project-charter.md) for project scope and milestones, and the [Documentation Guide](../docs/DOCUMENTATION-GUIDE.md) for governing document conventions.

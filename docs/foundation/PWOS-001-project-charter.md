@@ -70,6 +70,12 @@ The day-one desktop is a **functional development environment**, not a promise t
 - **AI:** Local inference on self-hosted hardware; model and performance targets remain subject to benchmarking.
 - **Remote access:** Private and authenticated access, introduced after security testing.
 
+### Proposed public demonstration channel (2026-10-28)
+
+**Proposal for owner review; not an amendment to the accepted PWOS-001 v0.12 scope or D0 acceptance gate.** In addition to a Codespaces development preview and the eventual private Pi-hosted OS, the project may publish a **static, non-sensitive GitHub Pages demo** of the browser interface. This public site must use sample/mock data and expose no live identity, filesystem, AI, device-management, or other privileged Pi capabilities. It is a distribution and UI-testing option, **not** a migration of personal cloud storage or inference off the Pi.
+
+The expected project-site path is `/personal-os/`, subject to actual GitHub repository configuration and successful deployment testing. Before publishing, verify the static build, path handling, asset URLs, non-sensitive contents, navigation, and explicit unavailable-capability UI. The owner must separately approve any future change that allows a public origin to communicate with private authenticated services; it must not be inferred from this demo proposal.
+
 ### 3.1 Assumptions and constraints
 
 - **Hardware commitment:** Raspberry Pi 5 is the target, but RAM size, storage capacity, power protection and network topology remain undecided.
@@ -225,7 +231,7 @@ packages/
 └── app-sdk/            # Reserved @personal-os/app-sdk workspace
 ```
 
-**Implementation snapshot update (2026-10-28):** The layout above describes an earlier starter still present in the supplied repository tree. New work is starting in `packages/desktop-shell/` independently of `apps/web`. The desktop-shell manifest, preliminary `src/index.ts` status types, and standalone `DesktopShell.tsx` presentation component now exist. The owner confirmed `npm ls --depth=0` and `npm run typecheck:desktop-shell` succeed in Codespaces. The component is **not yet re-exported**, and there is no package export map, app runtime, or completed host integration. This factual update does not change the accepted charter scope or D0 acceptance requirements.
+**Implementation snapshot update (2026-10-28):** The layout above describes an earlier starter still present in the supplied repository tree. New work is proceeding in `packages/desktop-shell/` independently of `apps/web`. The desktop-shell manifest, `src/index.ts` source exports for `DesktopShell` and public types, and standalone `DesktopShell.tsx` presentation component now exist. The owner confirmed `npm ls --depth=0` and `npm run typecheck:desktop-shell` succeed in Codespaces. There is **no package `exports` map, browser host integration, or working preview URL yet**; the new desktop cannot currently be viewed in a browser. This factual update does not change the accepted charter scope or D0 acceptance requirements.
 
 `shell/context/` governs **browser UI state only** and must not be confused with `kernel/`, which is reserved for original low-level OS research. Launcher and About are **shell chrome**, not deployable userland applications. `apps/file-manager/`, `apps/ai-assistant/`, and future full applications remain separate workspace targets. The registry is currently static and shell-internal; a future manifest and discovery protocol must replace direct coupling before independent app loading is claimed. `packages/os-api/` and `packages/app-sdk/` now reserve workspace identities without exported implementations; `packages/protocols/` remains a future contract directory.
 
@@ -321,7 +327,9 @@ The project follows a **continuously usable prototype** strategy: every stage mu
 | **D3 — Local AI alpha** | Invoke a Pi-hosted local model from an explicitly permissioned assistant UI | Model runs offline from a documented local endpoint; measured latency and memory use; tool calls require scoped authorization | Guaranteed model quality or unconstrained agent access |
 | **D4 — Stable personal service** | Routinely use the private browser OS with recovery procedures | Repeatable deployments, regression tests, monitored storage, rollback and documented recovery verified | Native custom kernel |
 
-**The fastest value path is D0 first.** The supplied earlier starter includes desktop placeholders and health endpoints, but current construction starts with the reusable `desktop-shell` package before host integration. The next implementation step is the shell's first component; once a web host is connected, launch it in a fresh Codespace, perform the D0 browser smoke test, and fix discovered issues. D0 is **not yet formally accepted**, because a fresh Codespace run and browser-level check have not been recorded. D1 makes the environment useful beyond a demo without compromising personal data.
+**The fastest value path is D0 first.** The supplied earlier starter includes desktop placeholders and health endpoints, but current construction starts with the reusable `desktop-shell` package before host integration. The next implementation steps are package configuration and web-host integration; once the host is connected, launch it in Codespaces, perform the D0 browser smoke test, and fix discovered issues. D0 is **not yet formally accepted**, because a browser-level check of the new experience has not been recorded. D1 makes the environment useful beyond a demo without compromising personal data.
+
+A public GitHub Pages build may be added as **optional D0 demonstration evidence** after the standard Codespaces experience is verified. The published demo cannot fulfill the D0 system-status/API response criterion by substituting fabricated live data; mock status must be labeled clearly. GitHub Pages publication is neither proof of backend readiness nor permission to expose the Pi.
 
 Do not block D1–D4 on kernel research. Keep experimental kernel work isolated from the stable web experience.
 
@@ -339,7 +347,7 @@ Do not block D1–D4 on kernel research. Keep experimental kernel work isolated 
 | Pi 5 ARM64 deployment | Not verified | Physical hardware test and production deployment are future milestones |
 | Original kernel | Research only | No custom kernel boot, scheduling, memory manager or drivers implemented |
 
-**The immediate implementation task is exporting the reusable desktop shell component**, developed independently of the web host. Workspace installation and TypeScript checking have been verified in Codespaces, but D0 browser verification is still required before accepting D0. Then implement the D1 narrow OS API and first genuinely useful in-house application. The table records earlier local test results and must be refreshed as evidence changes.
+**The immediate implementation task is making the exported desktop shell consumable via its package name**, then connecting a web host. Workspace installation and TypeScript checking have been verified in Codespaces, but D0 browser verification is still required before accepting D0. Then implement the D1 narrow OS API and first genuinely useful in-house application. The table records earlier local test results and must be refreshed as evidence changes.
 
 ## 9. Deferred capabilities
 

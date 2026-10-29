@@ -19,6 +19,9 @@ This is the navigation hub for Personal OS engineering documentation. The projec
 | Guide | Purpose |
 | --- | --- |
 | [Shared Packages Guide](../packages/README.md) | Current and proposed shared packages, public API boundaries, dependency rules and package development workflow |
+| [Improvement Register](IMPROVEMENTS.md) | Living prioritized ideas, tradeoffs, owner decision gates and verification evidence (non-governing) |
+
+The [project README](../README.md#proposed-github-pages-preview) describes the proposed GitHub Pages **static demo** profile and its separation from private Raspberry Pi hosting. This is a deployment proposal, not a sixth governing specification or a completed deployment.
 
 Files remaining from earlier planning iterations outside this inventory do **not** become approved specifications merely by existing. The prior System Requirements draft that once used PWOS-002 has been preserved at [historical requirements draft](archive/legacy-system-requirements-2026-10-26.md) as non-governing material; **PWOS-002 now identifies the new architecture foundation**.
 
@@ -29,15 +32,16 @@ Files remaining from earlier planning iterations outside this inventory do **not
 3. Read [PWOS-002](architecture/PWOS-002-system-architecture-foundation.md) for the accepted system-layer design, dependencies, app lifecycle and trust boundaries.
 4. Use the [Documentation Guide](DOCUMENTATION-GUIDE.md) when writing, reviewing or updating documents.
 5. Consult the [Shared Packages Guide](../packages/README.md) before adding shared code or extracting a system module.
-6. Return to this index for the current governing document inventory.
+6. Review the [Improvement Register](IMPROVEMENTS.md) for proposed enhancements and decisions worth discussing before implementation.
+7. Return to this index for the current governing document inventory.
 
 ## What we are working on
 
-The repository snapshot includes an earlier modular React/Vite browser starter (`apps/web/src/shell/`), shared TypeScript settings/UI tokens, and a Node.js/Fastify status API. **Current implementation work begins with `packages/desktop-shell/`, independently of the web host**: its manifest, type-only `src/index.ts`, and standalone `DesktopShell.tsx` layout exist. The owner verified npm workspace installation and desktop-shell TypeScript checking in Codespaces on **2026-10-28**. The component is not yet exported through the package entry point or integrated with a frontend host. The accepted target keeps `apps/web` thin and owns application hosting in a separate runtime package. Independent apps and `@personal-os/app-sdk`/`@personal-os/os-api` working interfaces remain planned. See the [Shared Packages Guide](../packages/README.md). Real personal storage, secure sign-in, local AI inference and an original kernel are not implemented.
+The repository snapshot includes an earlier modular React/Vite browser starter (`apps/web/src/shell/`), shared TypeScript settings/UI tokens, and a Node.js/Fastify status API. **Current implementation work begins with `packages/desktop-shell/`, independently of the web host**: its manifest, public `src/index.ts` component/type exports, and standalone `DesktopShell.tsx` layout exist. The owner verified npm workspace installation and desktop-shell TypeScript checking in Codespaces on **2026-10-28**. The package still needs a declared manifest `exports` map, and **the new shell is not yet rendered by a browser host or available at a preview URL**. The accepted target keeps `apps/web` thin and owns application hosting in a separate runtime package. Independent apps and `@personal-os/app-sdk`/`@personal-os/os-api` working interfaces remain planned. See the [Shared Packages Guide](../packages/README.md). Real personal storage, secure sign-in, local AI inference and an original kernel are not implemented.
 
 | Stage | Practical user outcome | Current standing |
 | --- | --- | --- |
-| **D0 — Day-one desktop** | Launch a browser desktop, open/close placeholders, inspect system status | Workspace install and shell type check verified in Codespaces; browser host integration and smoke test still needed |
+| **D0 — Day-one desktop** | Launch a browser desktop, open/close placeholders, inspect system status | Workspace install and shell type check verified; source exports exist; no runnable browser preview yet; optional Pages demo proposed |
 | **D1 — Useful local workspace** | Use one real in-house notes/tasks-style app with non-sensitive persistence | Planned |
 | **D2 — Private Pi alpha** | Authenticated owner storage with tested backup and restore on the Pi | Planned |
 | **D3 — Local AI alpha** | Offline inference through an authorized assistant UI | Planned |
@@ -69,4 +73,4 @@ Introduce a new document only when it has a defined purpose, an owner review dec
 
 ## Next action
 
-**Continue `packages/desktop-shell/` one file at a time**, next exporting the verified `DesktopShell` component from `src/index.ts`. Integrate a browser host and run browser-level verification before accepting D0.
+**Before implementation**, review the proposed public-demo isolation rules, static asset/base-path strategy, GitHub Pages visibility, and deployment verification gates. Then continue one file at a time: package TypeScript configuration and exports, browser host, local Codespaces smoke test, and optionally a GitHub Pages deployment. The Pages demo does not replace private Pi deployment or the accepted D0 gate.

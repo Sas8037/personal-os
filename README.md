@@ -4,7 +4,7 @@
 
 Personal OS is an experimental, browser-accessible desktop with in-house applications, a versioned OS API, owner-controlled file storage, and local AI as its intended capabilities. It is designed to begin on a **Raspberry Pi 5** using Linux-hosted services and eventually support hybrid or virtual execution backed by an **original kernel developed from the ground up**.
 
-The repository is named `personal-os`. Its documentation retains the historical `PWOS` identifier prefix for stable references.
+The repository is named `personal-os`. Its documentation retains the historical `PWOS` identifier prefix for stable references. Proposed enhancements and their status are tracked in the [Improvement Register](docs/IMPROVEMENTS.md).
 
 > **Current stage: System Concept v0.1 / D0 shell foundation.** npm installation and the desktop-shell TypeScript check succeeded in GitHub Codespaces on 2026-10-28. Browser delivery and the complete D0 smoke test remain unverified. This is **not** a secure production OS, deployed personal cloud, running local AI service, or working custom kernel.
 
@@ -26,11 +26,12 @@ The repository is named `personal-os`. Its documentation retains the historical 
 | Component | State |
 | --- | --- |
 | Browser desktop shell | Modular shell under `apps/web/src/shell/`: registry, launcher, dock, widgets and window panel |
+| GitHub Pages demo | Proposed static D0 preview; not configured, deployed, or connected to private services |
 | HTTP API | Starter available: `GET /health` and `GET /api/system` |
 | Codespaces environment | Owner confirmed `npm ls --depth=0` and `npm run typecheck:desktop-shell` succeed (2026-10-28); no browser smoke test yet |
 | Automated checks | Desktop-shell type check verified in Codespaces; browser build, API tests and documentation CI are not part of the current shell-first root scripts |
 | Versioned OS API, SDK and Linux backend | Planned; package names reserved, contracts and backend implementations not built |
-| Shared shell and app runtime packages | `desktop-shell` manifest, type-only `src/index.ts` and standalone `DesktopShell.tsx` layout created and type-checked; not yet exported from package or hosted in a browser; app runtime not implemented |
+| Shared shell and app runtime packages | `desktop-shell` manifest, public `src/index.ts` source exports and standalone `DesktopShell.tsx` layout created and type-checked; package-name import mapping and browser host integration pending; app runtime not implemented |
 | Authentication, real file management and personal cloud | Not implemented |
 | Local AI inference | Not implemented |
 | Raspberry Pi production deployment | Not verified |
@@ -52,9 +53,22 @@ For staged acceptance criteria and remaining work, see [PWOS-001 — Project Cha
 
 4. Commit the generated `package-lock.json` for repeatable installs; do not commit `node_modules/`.
 
-**There is no shell-first browser launch command yet.** The earlier archive contains a web/API starter, but the current Codespaces setup has not begun integrating `apps/web`. Do not expect `npm run dev` or forwarded ports to work with the current root manifest.
+**There is no shell-first browser launch command yet.** The earlier archive contains a web/API starter, but the active Codespaces setup has not begun integrating `apps/web`. `DesktopShell` is valid React code but does not display anything until a web host renders it. Do not expect `npm run dev` or forwarded ports to work with the current root manifest.
 
 Any placeholder Files/Local AI/Tools/Settings tiles in the earlier archived starter are not evidence of working file access or AI inference.
+
+## Proposed GitHub Pages preview
+
+Personal OS plans to support **two web delivery profiles** using the same reusable desktop shell:
+
+| Profile | Intended location | Allowed functionality |
+| --- | --- | --- |
+| **Public demo** | GitHub Pages, provisionally `https://sas8037.github.io/personal-os/` | Statically built UI, sample apps, mock status and explicitly non-sensitive demonstration data |
+| **Private OS** | Raspberry Pi 5, on an owner-controlled private connection | Authenticated services, private storage, and local AI once independently implemented and reviewed |
+
+The Pages URL is **not active or verified**. GitHub Pages serves static files; it does not host the Personal OS service gateway, personal cloud, inference engine or custom kernel. A public demo must never embed credentials, private files, production API endpoints or a model-tool bridge. **Do not connect the public Pages origin directly to privileged Pi services as part of D0.** The production/private OS remains Pi-hosted.
+
+When a web host is implemented, the planned deployment uses a Vite static build, an environment-specific asset base (`/personal-os/` for the GitHub project site), and a GitHub Actions Pages deployment. Navigation and asset loading must be verified under the repository subpath. A public Pages demo is **optional D0 distribution**, not a replacement for Codespaces browser smoke testing or an authorization/security review.
 
 ## Repository organization
 
@@ -90,7 +104,7 @@ personal-os/
 └── docs/                  # Design and engineering documentation
 ```
 
-This is a **mixed current/target overview**: `desktop-shell/` has a manifest, preliminary status types in `src/index.ts`, and a standalone `DesktopShell.tsx` presentation frame. The React component is not yet re-exported through `index.ts`, styled, or integrated with an application host; the package has no declared public `exports` map. `app-runtime/` and `design-system/` remain planned paths. See the [Shared Packages Guide](packages/README.md) for status and dependency conventions. [PWOS-001](docs/foundation/PWOS-001-project-charter.md) establishes the project scope; [PWOS-002](docs/architecture/PWOS-002-system-architecture-foundation.md) governs architectural ownership. Individual OS API contracts are **not yet defined or stable**.
+This is a **mixed current/target overview**: `desktop-shell/` has a manifest, public status types and `DesktopShell`/`DesktopShellProps` source exports through `src/index.ts`, and a standalone `DesktopShell.tsx` presentation frame. The component is not yet styled or integrated with an application host, and the package has no declared `exports` map for package-name imports. `app-runtime/` and `design-system/` remain planned paths. See the [Shared Packages Guide](packages/README.md) for status and dependency conventions. Track proposals, priorities, and verification in the [Improvement Register](docs/IMPROVEMENTS.md), which is a planning tracker rather than an approved specification. [PWOS-001](docs/foundation/PWOS-001-project-charter.md) establishes the project scope; [PWOS-002](docs/architecture/PWOS-002-system-architecture-foundation.md) governs architectural ownership. Individual OS API contracts are **not yet defined or stable**.
 
 The supplied repository snapshot contains an earlier `apps/web/src/` starter with a `shell/` directory and `main.tsx`. **The active implementation sequence now begins in `packages/desktop-shell/` independently of `apps/web`; the earlier starter is not a prerequisite or evidence that the new host integration is underway.** Browser desktop state is not the experimental hardware kernel. When a frontend host is integrated, `apps/web` should remain thin; `apps/desktop` must have a distinct role and must not duplicate the shell. Independent user applications belong in root workspaces such as `apps/file-manager/` and `apps/ai-assistant/`.
 
@@ -140,4 +154,6 @@ Do not commit credentials, personal files, model weights, databases, or other pr
 
 ## Next working experience
 
-**D0 — Day-one desktop:** Complete and connect the reusable desktop shell to a web host, then open the Codespaces preview, verify app panels and API responses, and record smoke-test results. An earlier starter remains in the supplied snapshot but is not a dependency of the current shell-first implementation sequence. Then **D1 — Useful local workspace** will add one genuinely useful in-house application with non-sensitive persisted data. The staged acceptance gates and proposed metrics are defined in [PWOS-001](docs/foundation/PWOS-001-project-charter.md#8-use-from-day-one-delivery-plan).
+**D0 — Day-one desktop:** Configure the shell package for consumption, connect `DesktopShell` to a web host, run a development server, then open the forwarded Codespaces preview and verify interaction and API responses. **The new Personal OS desktop is not yet viewable in the browser.** An earlier starter remains in the supplied snapshot but is not a dependency of the active shell-first implementation sequence. Then **D1 — Useful local workspace** will add one genuinely useful in-house application with non-sensitive persisted data. Acceptance criteria remain in [PWOS-001](docs/foundation/PWOS-001-project-charter.md#8-use-from-day-one-delivery-plan).
+
+**Possible extra D0 deliverable:** a non-sensitive, read-only GitHub Pages demo after a working static build and deployment workflow are tested. Neither this extra preview nor Pi production hosting has been implemented.

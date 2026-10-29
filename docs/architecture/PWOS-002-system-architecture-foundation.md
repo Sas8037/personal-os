@@ -76,7 +76,7 @@ Arrows indicate conceptual dependencies or service interaction, **not** mandator
 | --- | --- | --- | --- |
 | Web delivery host | `apps/web/` | Browser bootstrap, root composition, routing and deployment entry point | Exists; currently contains shell internals |
 | Alternative host | `apps/desktop/` | Reserved for a separate native/embedded frontend host using public shell/runtime contracts | Placeholder; not activated |
-| Reusable shell | `packages/desktop-shell/` | Desktop, launcher, dock, windows, system panels and widgets | Manifest, preliminary entry-point types, and standalone `DesktopShell.tsx` layout present; type checking verified; no package export or host integration |
+| Reusable shell | `packages/desktop-shell/` | Desktop, launcher, dock, windows, system panels and widgets | Manifest, source-level component/type exports, and standalone `DesktopShell.tsx` layout present; type checking verified; package-name mapping and host integration pending |
 | Application runtime | `packages/app-runtime/` | Discovery, lifecycle, host integration, and isolation coordination | Proposed; not implemented |
 | Applications | `apps/file-manager/`, `apps/ai-assistant/`, later app workspaces | Independently owned user functionality | Planned placeholders |
 | App SDK | `packages/app-sdk/` | Public app interfaces, manifests, capability requests, lifecycle hooks | Package identity reserved; no public API |
@@ -88,6 +88,22 @@ Arrows indicate conceptual dependencies or service interaction, **not** mandator
 | Platform | `platform/` | Device support, images, deployment and boot integration | Planned |
 
 The implemented Fastify API in `apps/api/` is a **status-only starter**, not yet the service gateway described in this target architecture. See [§12](#12-finalized-architecture-decisions) for the selected design boundaries that these modules must eventually implement.
+
+### 3.2 Proposed static-preview deployment profile
+
+**Status: proposed clarification for owner review; not a ninth accepted ARC decision.** The same frontend host and shared desktop shell may be built for two delivery profiles:
+
+| Concern | Public GitHub Pages demo | Private Raspberry Pi host |
+| --- | --- | --- |
+| Delivery | Static HTML/CSS/JavaScript artifact | Browser frontend and separately deployed private services |
+| Data | Public samples or explicitly non-sensitive mock content | Authorized owner data through trusted service contracts |
+| Capabilities | Presentation and explicitly demo-only behavior | Capability discovery and service-enforced privileged operations |
+| AI/storage | Unavailable or clearly marked simulations | Self-hosted inference and storage after D2/D3 validation |
+| Security assumption | **Public and inspectable**; no secrets or private service connectivity | Authenticated and authorized private access subject to threat review |
+
+The shell should render advertised capabilities but not decide privilege. A frontend host must not hardcode public-demo service endpoints inside shared packages. For a future Vite-based Pages build, configure project-subpath assets (`/personal-os/` unless a custom domain changes the base), deterministic client-side navigation/reload behavior, and a static build artifact published by GitHub Actions. Validate direct deep links, missing routes and cache updates before release. Pages cannot execute backend services. **No public Pages preview is currently deployed.**
+
+This deployment profile supplements the accepted host-independence and least-authority principles. **Any direct connection from the public demo origin to private Pi services requires its own threat model, consent and architecture approval**; it is out of scope for the static D0 demo.
 
 ## 4. Dependency and ownership rules
 
@@ -295,7 +311,7 @@ personal-os/
 
 ### 10.1 Current state versus target
 
-The supplied repository snapshot includes an earlier `apps/web/src/shell/` implementation with the launcher, About, dock, window manager, widgets, registry and browser state; `apps/api/` provides status endpoints. Current development is proceeding **independently in `packages/desktop-shell/`**, where `package.json`, preliminary type-only `src/index.ts`, and a standalone `DesktopShell.tsx` presentation frame now exist. The owner verified workspace installation and shell TypeScript checking in Codespaces on 2026-10-28; the component is not yet a declared package export or integrated with a host. `packages/tsconfig/` and `packages/ui/` provide small shared foundations; `packages/app-sdk/` and `packages/os-api/` reserve identities with **no stable exports**. `packages/app-runtime/` is not implemented. This is a factual status update, not a revision to the accepted architecture decisions.
+The supplied repository snapshot includes an earlier `apps/web/src/shell/` implementation with the launcher, About, dock, window manager, widgets, registry and browser state; `apps/api/` provides status endpoints. Current development is proceeding **independently in `packages/desktop-shell/`**, where `package.json`, `src/index.ts` source-level `DesktopShell`/type exports, and a standalone `DesktopShell.tsx` presentation frame now exist. The owner verified workspace installation and shell TypeScript checking in Codespaces on 2026-10-28; the package still lacks a manifest `exports` map and browser host integration, so the new shell is **not yet viewable through a browser preview URL**. `packages/tsconfig/` and `packages/ui/` provide small shared foundations; `packages/app-sdk/` and `packages/os-api/` reserve identities with **no stable exports**. `packages/app-runtime/` is not implemented. This is a factual status update, not a revision to the accepted architecture decisions.
 
 The reusable shell can be implemented before a new frontend host is started, then connected through documented public exports. If the earlier web starter is reused or migrated, preserve its D0 capabilities. Keep the frontend bootstrap small, but do not force the future kernel or native UI to depend on React.
 
