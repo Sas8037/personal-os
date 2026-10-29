@@ -10,6 +10,36 @@ The current **five governing project documents** are `personal-os/README.md`, `d
 
 Before adding another numbered document, define its responsibility, identify who reviews it, give it a stable name and metadata, then update the documentation index. Do not silently promote a legacy draft by linking to it as authoritative.
 
+## Supplementary registry and development workflow
+
+The [File Registry](FILE-REGISTRY.md) records actual project files, Git tracking states, Current/Planned/Historical lifecycle classifications, responsibilities and ownership, meaningful dependencies/relationships, and review evidence. Check the actual checkout when refreshing its snapshot; an inventory entry is not proof of implementation verification.
+
+The [Development Workflow](DEVELOPMENT-WORKFLOW.md) defines edit, verify, review, stage, commit, push, and confirmation practices, including Conventional Commits. Refer to that guide for Git commands, staging and recovery rules rather than duplicating them here.
+
+Both are living, non-governing supplementary guides. They do not change the five-document governing baseline, grant implementation approval, or establish CI, automatic enforcement, or browser integration.
+
+Synchronize the File Registry whenever a project file is created, removed, renamed, changes ownership/responsibility, lifecycle classification, Git tracking state, or material implementation/review status. Record the review date and evidence, distinguishing direct checks from owner-reported results. Inconsequential content edits do not automatically require registry updates.
+
+Preserve one-file-at-a-time editing and review. When registry or other documentation synchronization requires another file, schedule it as a separate task and report the pending synchronization in the handoff. A logical commit may group separately reviewed related files as described in the Development Workflow, within the owner's authorized scope. These supplementary practices do not replace Improvement Register maintenance or architectural approval rules.
+
+## Current / Planned / Historical classification
+
+Use these classifications to distinguish repository reality from intent and past work:
+
+| Classification | Meaning | Limits |
+| --- | --- | --- |
+| **Current** | An existing repository file/component, or an active, accepted document. | Existence does not establish feature completeness, successful verification, API stability, or production readiness. An accepted design can be Current while the subsystem it describes is Planned. |
+| **Planned** | A proposed future file, component, subsystem, or document that has not yet been implemented. | A reserved name or proposed path is not evidence that a directory or implementation exists. A Current manifest or skeleton may support a Planned feature; describe each at the appropriate level. |
+| **Historical** | Removed, retired, archived, or superseded work retained or discussed for context. | State whether the underlying file still exists in the checkout, exists only in Git history, or is absent from the checkout with its retention location unverified. Historical material is not the active baseline. |
+
+Before identifying implementation files as Current, inspect the actual checkout rather than relying on earlier documentation, generated archives, or proposed architecture trees. Use directory/file inspection alongside `git ls-files`, `git status --short`, and `git check-ignore` where relevant. Distinguish Git-tracked source, untracked project files, and ignored/generated output. An untracked file may exist locally without being part of the committed baseline; generated output may demonstrate a build without being source. Environment-specific tooling directories must not be presented as tracked project components without checking Git tracking.
+
+Apply labels selectively in the documentation index, repository trees, inventories, and sections where existence or authority would otherwise be ambiguous. Separate actual repository trees from planned layouts. Labels are not required on every paragraph, link, or heading.
+
+Link only to files that actually exist at the stated path. For Planned files, use code-formatted paths such as `packages/app-runtime/` without implying that they exist. Do not create links to nonexistent Planned or Historical files. For Historical references, explicitly state whether the file remains present; link to retained files only after verifying the target. This does not relax the existing requirement to preserve superseded documents and link them to an existing replacement.
+
+These classifications are separate from document approval (`draft`, `proposed`, `accepted`, `superseded`) and implementation verification (for example, unverified, type-checked, built, or browser-tested). A Current draft file remains unapproved; a Current accepted specification does not prove its design is implemented. Keep the established YAML statuses, approval processes, and evidence requirements unchanged; do not add these classifications as replacement frontmatter statuses.
+
 ## Naming conventions
 
 ### 1. Repository and folder names
@@ -17,7 +47,7 @@ Before adding another numbered document, define its responsibility, identify who
 | Convention | Meaning | Example |
 | --- | --- | --- |
 | `personal-os` | Canonical Git repository name | `personal-os/` |
-| Lowercase, hyphen-separated folders | A functional documentation category | `requirements/`, `architecture/` |
+| Lowercase, hyphen-separated folders | A functional documentation category | `requirements/` (Planned), `architecture/` (Current under `docs/`) |
 | `README.md` | An index or introduction for the directory containing it | `docs/README.md` |
 | `DOCUMENTATION-GUIDE.md` | The rules for maintaining project documentation | `docs/DOCUMENTATION-GUIDE.md` |
 
@@ -31,16 +61,17 @@ Every directory-level `README.md` should start with a consistent, human-readable
 - Documentation navigation root: `# Personal OS — Documentation Index`.
 - Other directory indexes and guides: `# Personal OS — <Directory Purpose>`, using a concise title-cased purpose rather than the literal folder name when a clearer label exists.
 
-For example, `packages/README.md` uses `# Personal OS — Shared Packages`; a future `apps/README.md` could use `# Personal OS — Applications`. The heading identifies the page to readers, while the unchanged `README.md` filename lets GitHub show it automatically. **Do not rename README files to match their headings.** This title convention applies to directory READMEs, not numbered specification titles or ordinary component source files.
+For example, Current `packages/README.md` uses `# Personal OS — Shared Packages`; Planned `apps/README.md` could use `# Personal OS — Applications`. The heading identifies the page to readers, while the unchanged `README.md` filename lets GitHub show it automatically. **Do not rename README files to match their headings.** This title convention applies to directory READMEs, not numbered specification titles or ordinary component source files.
 
 ### Application workspace and package naming
 
-- **Current:** `apps/web/src/shell/` contains the launcher, About panel, dock, windows, widgets, static registry, and browser state. These are shell internals, not standalone applications.
-- **Target:** `packages/desktop-shell/` owns reusable desktop interface implementations and `packages/app-runtime/` owns app discovery, lifecycle, hosting and isolation policy integration. `apps/web/` is a thin browser bootstrap host; `apps/desktop/` is reserved for a distinct host whose purpose must be decided before it is activated.
+- **Current:** `packages/desktop-shell/` contains the reusable presentation frame and public types, with verified strict TypeScript checking, build, and public exports. `apps/web/` contains only `package.json`; dependency installation and browser integration remain pending.
+- **Planned:** `packages/app-runtime/` will own app discovery, lifecycle, hosting and isolation policy integration. The web host is intended to remain thin; `apps/desktop/` is a proposed distinct host whose purpose must be decided before implementation. Neither planned directory exists in this checkout.
+- **Historical:** Earlier `apps/web/src/shell/` starter references describe files absent from this checkout. Launcher, About panel, dock, window, widget, and registry behavior must not be reported as implemented here on that basis.
 - `apps/*` at the monorepo root holds independently built application or host targets. For example, `apps/file-manager/` and `apps/ai-assistant/` are planned full application workspaces. An internal shell panel must not be presented as an independently deployable application.
-- Shared package names use the canonical `@personal-os/<package-name>` scope, such as `@personal-os/app-sdk` and `@personal-os/os-api`. A package's directory or manifest **does not** imply it already exports a stable API.
+- Shared package names use the canonical `@personal-os/<package-name>` scope, such as the Planned `@personal-os/app-sdk` and `@personal-os/os-api` identities. A package's directory or manifest **does not** imply it already exports a stable API.
 - Standalone applications must use documented public SDK/API contracts, not imports from `apps/web/src/shell/` or private `packages/desktop-shell/` internals. Keep shell-local React state distinct from the future hardware kernel in `kernel/`.
-- Use kebab-case for directories and package names; use PascalCase for React component filenames (`WindowManager.tsx`) and descriptive camelCase for hooks (`useSystemInfo.ts`).
+- Use kebab-case for directories and package names; use PascalCase for React component filenames (illustrative `WindowManager.tsx`) and descriptive camelCase for hooks (illustrative `useSystemInfo.ts`); these example files are absent.
 
 ### Architectural boundaries and implementation status
 
@@ -49,10 +80,10 @@ When creating a module, document **owner, purpose, allowed dependencies, public 
 1. Frontend hosts compose public shell/runtime entry points; they must not become the permanent owner of shell logic or privileged services.
 2. The desktop shell renders UI. The application runtime owns application loading/lifecycle semantics; privileged authorization belongs to trusted services and backends.
 3. Applications depend on the SDK, OS API and permitted UI libraries rather than private host components.
-4. `packages/os-api/` and `packages/protocols/` describe compatibility contracts; backend implementations are owned elsewhere. A native kernel may implement the contracts using another language or runtime.
-5. `kernel/` owns low-level OS execution/protection work, not browser state or React context.
+4. Planned `packages/os-api/` and `packages/protocols/` will describe compatibility contracts; backend implementations are owned elsewhere. A native kernel may implement the contracts using another language or runtime.
+5. Planned `kernel/` will own low-level OS execution/protection work, not browser state or React context.
 
-Classify each subsystem as **existing implementation**, **reserved workspace**, or **proposed target**. Do not present future folder layouts as current source-tree listings. A module README may be created as a local ownership note without adding another governing specification.
+Use **Current**, **Planned**, and **Historical** where subsystem status is ambiguous. Terms such as existing implementation, reserved workspace, and proposed target may add detail: a reserved workspace is Current only if its files exist, while its intended functionality may remain Planned. Do not present future folder layouts as current source-tree listings. A module README may be created as a local ownership note without adding another governing specification.
 
 These boundaries are recorded as the **accepted design direction** in [PWOS-002 — System Architecture Foundation](architecture/PWOS-002-system-architecture-foundation.md). Implementing them still requires concrete API schemas, isolation verification, compatibility tests, and evidence of cross-backend conformance before those capabilities may be declared operational.
 
@@ -61,16 +92,16 @@ These boundaries are recorded as the **accepted design direction** in [PWOS-002 
 | Prefix | Stands for | Used for | Example |
 | --- | --- | --- | --- |
 | `PWOS` | **Personal Web OS**, the project's original name | Numbered, project-wide specifications and governing documents | `PWOS-002-system-architecture-foundation.md` |
-| `ADR` | **Architecture Decision Record** | Important design choices, alternatives and rationale | `ADR-006-backend-contracts.md` *(future)* |
-| `M` | **Milestone** | Planned work with deliverables and exit criteria | `M01-desktop-foundation.md` |
+| `ADR` | **Architecture Decision Record** | Important design choices, alternatives and rationale | `ADR-006-backend-contracts.md` *(illustrative Planned filename; ID allocation requires review)* |
+| `M` | **Milestone** | Planned work with deliverables and exit criteria | `M01-desktop-foundation.md` *(illustrative Planned filename)* |
 | `FR` | **Functional Requirement** | A behavior or capability the system must provide | `FR-01` inside a future requirements document |
 | `NFR` | **Non-Functional Requirement** | A quality, constraint or assurance requirement | `NFR-04` inside a future requirements document |
 
 `PWOS` remains the stable document identifier prefix even though the repository is now called `personal-os`. Changing old identifiers would unnecessarily break references. New project-wide specifications continue the `PWOS` sequence unless a formal naming decision changes it.
 
-The existing decision log uses `ADR-001` through `ADR-005`. Any new individual decision should continue with `ADR-006`, **not** restart numbering at `ADR-0001`.
+No active decision-log file or individual `ADR-*` document exists in the current checkout. Earlier references to `ADR-001` through `ADR-005` do not establish that those records are present. Before assigning a new ADR ID, check repository history and prior allocations with the owner; preserve any previously assigned IDs and continue after the highest confirmed allocation. If `ADR-001` through `ADR-005` are confirmed as allocated, the next ID is `ADR-006`. Use the three-digit format, not `ADR-0001`, and never reuse an ID merely because its file is absent.
 
-Research notes do not yet need a numbered prefix. Use a descriptive filename such as `capability-scheduler-hypothesis.md`; introduce a research ID scheme only when tracking requires it.
+Research notes do not yet need a numbered prefix. Use a descriptive filename such as the illustrative Planned `capability-scheduler-hypothesis.md` (absent from this checkout); introduce a research ID scheme only when tracking requires it.
 
 ### 3. Filename format
 
@@ -95,15 +126,15 @@ Rules:
 5. Choose descriptions based on the document's enduring subject, not its temporary status.
 6. Do **not** put version numbers, `draft`, `final`, or dates into specification filenames. Put those values in the document and Git history.
 
-Examples:
+Filename examples (illustrative Planned paths are absent and are not assigned document IDs):
 
 | Correct | Why |
 | --- | --- |
-| `foundation/PWOS-001-project-charter.md` | Stable charter identifier and descriptive filename |
-| `architecture/PWOS-002-system-architecture-foundation.md` | Accepted architecture specification |
-| `architecture/PWOS-003-system-architecture.md` | Architecture specification with a permanent ID |
-| `roadmap/M01-desktop-foundation.md` | First milestone with a two-digit milestone number |
-| `decisions/decision-log.md` | Living index of decisions, not a separate numbered ADR |
+| `foundation/PWOS-001-project-charter.md` | Current: stable charter identifier and descriptive filename |
+| `architecture/PWOS-002-system-architecture-foundation.md` | Current: accepted architecture specification |
+| `architecture/PWOS-003-system-architecture.md` | Illustrative Planned architecture filename; allocate a permanent ID before creation |
+| `roadmap/M01-desktop-foundation.md` | Illustrative Planned milestone filename with a two-digit number |
+| `decisions/decision-log.md` | Illustrative Planned living index of decisions, not a separate numbered ADR |
 
 Avoid names such as `requirements-final-v3.md`, `new-design.md`, `misc.md`, or `PWOS-002_SystemRequirements.MD`.
 
@@ -116,7 +147,7 @@ Files in different directories may share a name such as `README.md`, because the
 ### 5. Numbering policy
 
 - `PWOS-001`, `PWOS-002`, ...: consecutive three-digit document IDs; gaps are allowed if a document is retired.
-- `ADR-001`, `ADR-002`, ...: consecutive three-digit decision IDs, continuing the existing log.
+- `ADR-001`, `ADR-002`, ...: consecutive three-digit decision IDs, continuing confirmed prior allocations after checking history; no active decision log is present.
 - `M01`, `M02`, ...: consecutive two-digit milestone IDs; numbering reflects planning order, not a guaranteed release date.
 - `FR-01`, `FR-02`, ... and `NFR-01`, `NFR-02`, ...: requirement IDs unique **within their owning specification**. Outside that document, qualify the ID using its document ID (for example, `PWOS-005:FR-01` if a future requirements document is assigned PWOS-005).
 
@@ -154,7 +185,7 @@ The required keys are:
 | `last_reviewed` | Date of last content review | Quoted `YYYY-MM-DD` string |
 | `superseded_by` | Replacement document ID | `null` unless status is `superseded` |
 
-We intentionally use a small **flat YAML subset** for metadata—quoted string scalars and `null`, with one key per line—so standard YAML parsers and our lightweight CI checker interpret it consistently. `README.md`, the documentation index, the documentation guide, and the living `decision-log.md` are navigation or policy pages and do not require numbered-document frontmatter.
+We intentionally use a small **flat YAML subset** for metadata—quoted string scalars and `null`, with one key per line—so standard YAML parsers and future validation tooling can interpret it consistently. `README.md`, the documentation index, and the documentation guide are navigation or policy pages and do not require numbered-document frontmatter. A Planned living `decision-log.md` would also be exempt.
 
 Use `accepted` only when the document has actually been reviewed and adopted. `implemented` and `verified` describe engineering evidence, not frontmatter review statuses.
 
@@ -184,7 +215,7 @@ The **filename does not change** simply because its internal version changes.
 Any document marked `status: "superseded"` **must**:
 
 1. Set `superseded_by` to the stable ID of an existing replacement document (for example, `"ADR-012"`).
-2. Include a prominent forward link immediately after its Markdown title, such as `**Superseded by:** [ADR-012](../decisions/ADR-012-replacement.md)`.
+2. Include a prominent forward link immediately after its Markdown title, using a verified existing replacement target. Illustrative syntax only: `**Superseded by:** [ADR-012](../decisions/ADR-012-replacement.md)`. That example file is absent; do not create that link unless the replacement actually exists.
 3. Preserve the original document and its ID for traceability; do not silently rewrite history or reuse its identifier.
 4. Update indexes and inbound references that describe which document is authoritative.
 
@@ -215,9 +246,9 @@ If requirements later split into subsystem-specific specifications, the owning d
 
 ## Verification and enforcement
 
-The repository snapshot includes `scripts/lint-docs.mjs`, which checks documentation conventions. The current **shell-first root package manifest** does not yet expose `npm run docs:check`, so run `node scripts/lint-docs.mjs` directly when the script is present. Restoring the root script and connecting CI to it is pending; do not claim that the current Codespaces setup enforces documentation checks automatically.
+**Current:** Inspection of the checkout and tracked files confirms that `scripts/lint-docs.mjs`, a root `docs:check` script, and documentation CI workflows are not implemented. There is no documentation checker to run or automated documentation enforcement to claim.
 
-The check must fail when it finds:
+**Planned — IMP-008:** Future tooling must implement the following six validation checks and fail on each corresponding violation:
 
 1. Broken local Markdown links or references to moved paths.
 2. Numbered document filenames that do not match the identifier naming scheme.
@@ -226,15 +257,9 @@ The check must fail when it finds:
 5. Missing or invalid `superseded_by` pointers, or missing forward links for superseded documents.
 6. Duplicate document IDs across governed Markdown files.
 
-Requirement ID collisions **within one specification** are checked. Cross-document references must use a qualified `PWOS-XXX:FR-YY` or `PWOS-XXX:NFR-YY` form; prose-level enforcement is advisory initially because automated recognition of every mention is prone to false positives. A more advanced traceability linter may be added when the requirements catalog expands.
+Future tooling must also check requirement ID collisions **within one specification**. Cross-document references must continue to use a qualified `PWOS-XXX:FR-YY` or `PWOS-XXX:NFR-YY` form. Automated recognition of prose references is prone to false positives; any initial automation should document its advisory limits. More advanced traceability validation may follow when the requirements catalog expands.
 
-**Local review command:**
-
-```bash
-node scripts/lint-docs.mjs
-```
-
-The check validates documentation format and references, not the technical truth of its claims. Human review remains necessary for correctness, completeness, and feasibility.
+For current manual review, inspect the actual files, verify local link targets, compare metadata and identifiers against these rules, run `git diff --check`, and review the changed-file diff. These checks do not replace the Planned IMP-008 validator. Future tooling will validate documentation format and references, not the technical truth of its claims; human review remains necessary for correctness, completeness, and feasibility.
 
 ## Improvement register maintenance
 
@@ -268,5 +293,9 @@ Current synchronization responsibilities:
 | Repository startup or implemented capability | Root README and charter's evidence snapshot |
 | Documentation naming or review policy | Documentation Guide; docs index instructions; affected governed frontmatter |
 | Authoritative document inventory | Docs index; root README's document links; charter's governing-set section |
+| Project file created, removed, renamed, or changed in ownership, lifecycle, Git tracking state, or material implementation/review status | File Registry entries, relationships, counts and evidence; schedule the registry edit as a separate task |
+| Dependency or file-responsibility relationship changes | File Registry dependency/synchronization notes; affected module ownership documentation in separate file steps |
+| Git development, review, commit, branch, push, recovery or reporting practices change | Development Workflow; check this guide's references for consistency without duplicating workflow rules |
+| Supplementary registry/workflow guide added, renamed, or changed in role | Documentation index navigation and File Registry; preserve the five-document governing set and schedule each file separately |
 
 Do not treat documenting a proposed feature as implementing it. Keep claims of completion tied to observable evidence.
