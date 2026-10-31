@@ -1,7 +1,7 @@
 # Personal OS — Development Workflow
 
 **Classification:** Current living, non-governing supplementary guide.
-**Last reviewed:** 2026-10-29
+**Last reviewed:** 2026-10-31
 
 This guide describes Git practices for Personal OS. It does not approve implementation work or replace the [Documentation Guide](DOCUMENTATION-GUIDE.md), [Improvement Register](IMPROVEMENTS.md), charter, or architecture. Use the actual checkout as the source of truth. The [File Registry](FILE-REGISTRY.md) distinguishes tracked source, local project files, and generated output.
 
@@ -38,7 +38,21 @@ The commands below are workflow examples, not operations already performed or au
    npm run build -w @personal-os/desktop-shell
    ```
 
-   Their prior successful verification is recorded under IMP-002. Report fresh results only when actually rerun. Build output goes to the ignored shell `dist/` directory. For documentation, check referenced paths, classification, metadata where applicable, and whitespace. No documentation checker, root `docs:check`, or documentation CI is currently implemented; future tooling is IMP-008.
+   Prior owner-reported verification is recorded under IMP-002; later Codex tasks also passed shell typecheck/build and web production build. Report fresh results only when actually rerun. Build the shell before its compiled public exports are consumed by the React/Vite web host; output goes to ignored `packages/desktop-shell/dist/`.
+
+   From the repository root, use `npm ci` for a reproducible clean installation from the committed lockfile; it replaces local installed dependencies. Clean-checkout reproducibility still requires GP-02 evidence. Use `npm install` for deliberate dependency updates and review the generated lockfile with the relevant manifest. Web workspace commands are:
+
+   ```bash
+   npm run dev -w @personal-os/web -- --port 5173 --strictPort
+   npm run build -w @personal-os/web
+   npm run preview -w @personal-os/web -- --port 4173 --strictPort
+   ```
+
+   Keep the Codespaces port-5173 preview private. A production preview serves the separate built artifact and needs its own browser evidence; development preview acceptance does not establish `/personal-os/` asset/routing readiness or public-deployment success.
+
+   Playwright Test `1.64.1` is installed in the web workspace and `test:e2e` maps to `playwright test`. Chromium setup has not been reported complete; Playwright configuration and smoke/accessibility suites are absent, so do not run `npm run test:e2e -w @personal-os/web` merely because the script exists. IMP-007 proceeds through isolated local smoke testing, accessibility acceptance, then dedicated testing CI. GP-02 remains In progress, acceptance pending. No public Pages deployment or publication approval is established.
+
+   For documentation, check referenced paths, classification, metadata where applicable, and whitespace. No documentation checker, root `docs:check`, or documentation CI is currently implemented; future tooling is IMP-008.
 
 4. **Review.** Read the complete diff, not just the summary. For an existing documentation file, for example:
 
@@ -68,7 +82,7 @@ The commands below are workflow examples, not operations already performed or au
    git show --stat --oneline HEAD
    ```
 
-   A local commit is not a push, CI result, or browser test. Inspect the resulting commit for the intended files and message.
+   A local commit is not a push, CI result, or browser test. Inspect the resulting commit for the intended files and message. Verification-only tasks that change no files require no empty commit or push.
 
 7. **Push.** Confirm the destination repository, local branch, remote branch, and upstream immediately before publishing. At this guide's review, `origin` points to `https://github.com/Sas8037/personal-os` and the local branch is `main`; this observation is not permission to push to main or a promise that future remotes are unchanged. Fetch the intended remote when authorized, inspect divergence, and resolve it without overwriting others' work. On an authorized new topic branch, an explicit example is:
 
@@ -107,7 +121,9 @@ Use `type(scope): imperative summary`. Keep the subject concise (aim for 72 char
 | `perf` | Improve measured performance without changing intended behavior |
 | `security` | Remediate a security weakness; avoid disclosing sensitive details |
 
-Useful scopes are `web`, `shell`, `runtime`, `api`, `docs`, `registry`, `repo`, `kernel`, `storage`, and `ai`. Scopes identify responsibility, not implementation status: the shell exists, the web host is manifest-only, and runtime/API/kernel/storage/AI implementations remain Planned. Select the narrowest useful scope; use `repo` for a genuinely repository-wide logical change.
+Useful scopes are `web`, `shell`, `runtime`, `api`, `docs`, `registry`, `repo`, `kernel`, `storage`, and `ai`. Scopes identify responsibility, not implementation status: the reusable shell and thin React/Vite web host are Current, and runtime/API/kernel/storage/AI implementations remain Planned. Select the narrowest useful scope; use `repo` for a genuinely repository-wide logical change.
+
+The tracked [`.gitmessage`](../.gitmessage) provides comment-only guidance for the structure below. Configure each clone separately from the repository root with `git config --local commit.template .gitmessage` and verify `git config --local --get commit.template`. This local setting is Git metadata, not shared configuration. Replace guidance with factual content; comments/placeholders must not become the final message. Using explicit commit messages does not imply editor-template behavior was tested.
 
 Separate the body from the subject with a blank line. Use the following recommended structure, scaling detail to the change:
 
@@ -147,7 +163,7 @@ Impact:
 Refs: IMP-015
 ```
 
-Implementation/build example:
+Historical implementation/build example (its unverified-browser wording describes that earlier stage, not the current GP-01 baseline):
 
 ```text
 build(shell): expose compiled desktop shell entry points
@@ -210,10 +226,10 @@ When the repository workflow calls for a pull request, push the topic branch and
 ## Files requiring care
 
 - **Untracked files:** Inspect purpose, contents, and relevance before explicit staging. A local file is not yet part of the committed baseline. Local editor/environment settings are not automatically shared project configuration.
-- **Ignored/generated output:** Keep `packages/desktop-shell/dist/` out of source commits. Do not force-add ignored files by default. Rebuild when needed; generated files are not proof of fresh verification.
-- **Tracked dependencies:** The registry snapshot reports 259 tracked `node_modules/` entries despite ignore rules. IMP-017 proposes removing them from Git tracking while preserving installed files. This guide authorizes no cleanup. Before any approved cleanup commit, confirm local dependencies remain intact, tracked dependency entries are gone, ignore rules match, and staged changes contain only the intended untracking.
+- **Ignored/generated output:** Keep shell/web `dist/` and web `test-results/`/`playwright-report/` out of source commits. Do not force-add ignored files by default. Rebuild when needed; generated files are not proof of fresh verification.
+- **Tracked dependencies:** IMP-017 removed the former 259 `node_modules/` entries from tracking; current Git inspection confirms zero remain. Dependencies are installed locally and ignored. Prior owner-reported preservation evidence is distinct from a fresh file-integrity check. This guide authorizes no cleanup; any future cleanup must verify local preservation, ignore rules and the exact staged scope.
 - **Secrets:** Review staged configuration and lockfile registry URLs for credentials, tokens, private endpoints, and personal data without echoing secrets into logs. Keep environment credentials out of Git. If a secret has been committed or pushed, stop publication, revoke/rotate it as appropriate, and coordinate remediation; deleting a file in a later commit does not erase history.
-- **Lockfiles:** Commit intentional changes to the existing root `package-lock.json` with the dependency-manifest change they resolve. Do not edit generated lock data manually or regenerate it to hide unrelated changes. Review dependency/version and registry changes. Web dependency installation and lockfile synchronization are pending; a manifest alone does not establish installed dependencies or a reproducible web build.
+- **Lockfiles:** Commit intentional changes to the existing root `package-lock.json` with the dependency-manifest change they resolve. Do not edit generated lock data manually or regenerate it to hide unrelated changes. Review dependency/version and registry changes. The root lockfile is committed and synchronized with shell/web declarations, including Playwright Test `1.64.1`. Installed tooling alone does not establish a passing test suite; repeatable clean-checkout installation/build remains a separate GP-02 check.
 
 ## Safe recovery
 
@@ -234,10 +250,10 @@ Do not default to `git reset --hard`, `git clean`, force-push, or deleting direc
 Distinguish evidence precisely:
 
 - **Local verification:** Commands actually run and their results, with relevant scope. Strict shell type checking and compilation do not establish browser behavior.
-- **Browser testing:** Actual rendering, refresh, interactions, and URL/environment checked. No Personal OS browser preview has been verified yet.
+- **Browser testing:** Actual rendering, refresh, interactions, and URL/environment checked. GP-01 is Completed based on owner-reported private Codespaces rendering, truthful offline status, refresh, desktop/mobile usability and a clean Incognito console; IMP-001 is Verified. Prior Codex build/server/Host-header checks are separate evidence. Automated browser testing remains pending; record Codespaces, production-preview and public-site results separately.
 - **CI verification:** A specific remote workflow/run and result. CI is not currently implemented; a successful local check or push is not a CI pass.
 - **Owner-reported evidence:** Attribute prior results explicitly rather than implying they were rerun.
 
 For each commit/push handoff, report the commit hash (or “not committed”), branch, changed files, checks/tests and results, checks not run, and remote status (not pushed, push failed, or confirmed remote branch/hash). Include remaining staged/unstaged/untracked work relevant to the task. Never describe local completion as published completion.
 
-Registry/index integration and any Improvement Register entry for this guide are separate one-file documentation steps. Creating this supplementary guide changes neither the five-document governing set nor approved architecture.
+Registry/index integration and IMP-018 workflow adoption are published. Remaining registry/register status synchronization and PWOS implementation-snapshot reviews are separate one-file documentation steps under IMP-015. Creating this supplementary guide changes neither the five-document governing set nor approved architecture.
