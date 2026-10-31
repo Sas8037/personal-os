@@ -6,7 +6,7 @@ Personal OS is an experimental, browser-accessible desktop with in-house applica
 
 The repository is named `personal-os`. Its documentation retains the historical `PWOS` identifier prefix for stable references. Proposed enhancements and their status are tracked in the [Improvement Register](docs/IMPROVEMENTS.md).
 
-> **Current stage: System Concept v0.1 / D0 shell foundation.** Owner-reported verification on 2026-10-29 covers desktop-shell strict TypeScript checking, compilation, compiled public export resolution, and source/declaration map generation. Browser delivery and the complete D0 smoke test remain unverified. This is **not** a secure production OS, deployed personal cloud, running local AI service, or working custom kernel.
+> **Current stage: first browser desktop accepted (GP-01).** The owner reports successful private Codespaces rendering, refresh, truthful offline status and usable desktop/mobile layouts. The host displays the reusable shell; no private backend, file service, persistent storage or AI is connected. IMP-007 Stage A automated smoke testing and GP-02 release readiness are next; neither browser automation nor production readiness is established.
 
 ## What we are building
 
@@ -25,12 +25,12 @@ The repository is named `personal-os`. Its documentation retains the historical 
 
 | Component | State |
 | --- | --- |
-| Desktop shell | Existing reusable presentation frame in `packages/desktop-shell`; strict TypeScript checks, build, compiled public exports, and source/declaration maps verified per the prior owner report on 2026-10-29 (IMP-002); no verified browser rendering |
-| Browser host | `apps/web/package.json` only; workspace `@personal-os/web` and Vite scripts declared; dependency installation, HTML entry, configuration, source, and browser integration pending |
-| Browser preview | No preview running; browser build, rendering, refresh, and complete D0 smoke test unverified (IMP-001 is next) |
+| Desktop shell | Reusable presentation frame in `packages/desktop-shell`, consumed through public exports. Prior owner-reported and Codex verification covers strict TypeScript checking, build, public entry resolution and generated maps (IMP-002); GP-01 browser rendering accepted per owner report. |
+| Browser host | Implemented `apps/web/index.html`, `src/main.tsx` and `vite.config.ts`; React 19 mounts DesktopShell through `@personal-os/desktop-shell`. Vite integrates React and an exact environment-derived Codespaces host allowance. |
+| Browser preview | GP-01 Completed and IMP-001 Verified based on owner-reported private Codespaces load, rendering, refresh, ~1280px/~390px usability and clean Incognito console. Server availability depends on launching it; no live server check is performed for this README update. |
 | GitHub Pages demo | Proposed static demonstration-only profile; no deployment configuration or verified site |
 | HTTP API | No `apps/api` implementation or verified endpoints in this checkout |
-| Automated checks | Shell workspace type-check/build commands previously verified per the owner report; no checked-in CI workflows, browser/API tests, or documentation checker |
+| Automated checks | Shell typecheck/build and web production build passed in prior Codex work. Exact `@playwright/test` 1.64.1 and `test:e2e` are installed/declared; Chromium completion is unconfirmed, Playwright configuration/tests and accessibility/CI checks are not implemented. No automated browser pass claimed. |
 | Application runtime, versioned OS API, SDK and backends | Planned architecture; no corresponding implementation directories in this checkout |
 | Shared UI and TypeScript configuration | `packages/ui` and `packages/tsconfig` absent; the shell owns its existing package-specific tsconfig |
 | Authentication, real file management, personal cloud and local AI | Not implemented |
@@ -41,22 +41,33 @@ For staged acceptance criteria and remaining work, see [PWOS-001 — Project Cha
 
 ## Quick start — GitHub Codespaces
 
-1. Create or open the GitHub repository named `personal-os` in Codespaces.
-2. The root manifest manages `apps/*` and `packages/*` workspaces. The existing packages are `@personal-os/desktop-shell` and the manifest-only `@personal-os/web`.
-3. In the repository root, install dependencies, check the shell types, and build the package:
+1. Open the `personal-os` repository in Codespaces. The root npm workspaces include `@personal-os/web` and `@personal-os/desktop-shell`. Use a supported Node version; prior setup used Node 24 and npm 11.
+2. From the repository root, install the committed lockfile dependencies, check the shell and build its public exports:
 
    ```bash
-   npm install
-   npm ls --depth=0
+   npm ci
    npm run typecheck -w @personal-os/desktop-shell
    npm run build -w @personal-os/desktop-shell
    ```
 
-   The web manifest was added after the verified shell installation; installing its declared dependencies and updating the lockfile remain pending. The commands above describe setup, not a completed web installation.
+   `npm ci` is the clean-install procedure; it replaces local installed dependencies. Clean-checkout reproducibility remains a GP-02 verification gate, not a result rerun here. The web dependencies and root lockfile are already synchronized and committed, including Playwright Test 1.64.1. Use `npm install` for intentional dependency changes and review the generated lockfile with the manifest.
+3. Start the web workspace:
 
-4. Review and commit intentional generated `package-lock.json` changes with their dependency manifest changes for repeatable installs. The root `.gitignore` excludes `node_modules/` and `packages/desktop-shell/dist/`; already tracked dependency files remain tracked. Build output is regenerated locally.
+   ```bash
+   npm run dev -w @personal-os/web -- --port 5173 --strictPort
+   ```
 
-The web manifest declares workspace `dev`, `build`, and `preview` scripts, but `apps/web` has no HTML entry, Vite configuration, or source files yet. Those commands are not a working browser preview at this stage. `DesktopShell` needs a host to render it; no browser preview is running. The root manifest has no `dev` command.
+   Forward port 5173 using Codespaces Ports with visibility **PRIVATE**, then open its URL. Vite derives the exact allowed forwarded hostname from `CODESPACE_NAME` and `GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN`; it preserves normal localhost security checks. The preview shows Personal OS shell content and an honest offline/no-service status. It provides no authenticated backend, file operations, persistent storage or AI connection.
+4. To build and inspect the production artifact locally, after the shell build:
+
+   ```bash
+   npm run build -w @personal-os/web
+   npm run preview -w @personal-os/web -- --port 4173 --strictPort
+   ```
+
+   Static output is `apps/web/dist/`. Production-preview browser validation and the `/personal-os/` asset base remain GP-02 work. Development preview acceptance does not establish Pages readiness.
+
+**Evidence:** Fresh checks for this README cover files, tracking states, package/lockfile declarations and documented scripts. Prior Codex tasks passed shell typecheck/build and web build and verified exact-host acceptance, unrelated-host rejection and simulated hostname portability. Owner-reported GP-01 browser checks covered rendering, refresh, desktop/mobile usability and no CSP warning or other console errors in Incognito. An earlier CSP warning did not reproduce there; its source remains unconfirmed. No installation, compiler/build, server or browser tests were rerun for this documentation change.
 
 ## Proposed GitHub Pages preview
 
@@ -67,32 +78,36 @@ Personal OS plans to support **two web delivery profiles** using the same reusab
 | **Public demo** | GitHub Pages, provisionally `https://sas8037.github.io/personal-os/` | Statically built UI, sample apps, mock status and explicitly non-sensitive demonstration data |
 | **Private OS** | Raspberry Pi 5, on an owner-controlled private connection | Authenticated services, private storage, and local AI once independently implemented and reviewed |
 
-The Pages URL is **not active or verified**. GitHub Pages serves static files; it does not host the Personal OS service gateway, personal cloud, inference engine or custom kernel. A public demo must never embed credentials, private files, production API endpoints or a model-tool bridge. **Do not connect the public Pages origin directly to privileged Pi services as part of D0.** The production/private OS remains Pi-hosted.
+The Pages URL is **proposed, not claimed deployed or verified**; public publication has not been approved. GitHub Pages serves static files; it does not host the Personal OS service gateway, personal cloud, inference engine or custom kernel. A public demo must never embed credentials, private files, production API endpoints or a model-tool bridge. **Do not connect the public Pages origin directly to privileged Pi services as part of D0.** The production/private OS remains Pi-hosted.
 
-When a web host is implemented, the planned deployment uses a Vite static build, an environment-specific asset base (`/personal-os/` for the GitHub project site), and a GitHub Actions Pages deployment. Navigation and asset loading must be verified under the repository subpath. A public Pages demo is **optional D0 distribution**, not a replacement for Codespaces browser smoke testing or an authorization/security review.
+The web host exists; the planned public deployment still requires a Vite static build, an environment-specific asset base (`/personal-os/` for the GitHub project site), and a GitHub Actions Pages deployment. Navigation and asset loading must be verified under the repository subpath. A public Pages demo is **optional D0 distribution**, not a replacement for Codespaces browser smoke testing or an authorization/security review.
 
 ## Repository organization
 
-The actual Codespaces checkout is the implementation source of truth. This Current inventory reflects the checkout reviewed on 2026-10-29. Entries are tracked first-party files unless explicitly marked untracked or generated. Tracked does not mean every working-tree edit has been committed; the shell manifest and package guide still have local modifications. The untracked project configuration files below are present locally but absent from the committed baseline.
+The actual Codespaces checkout is the implementation source of truth. This Current inventory reflects the checkout reviewed on 2026-10-31. All files shown are tracked first-party source/configuration/documentation; local editor support and ignored generated output are listed separately. The [File Registry](docs/FILE-REGISTRY.md) records 21 tracked project files plus one untracked local editor file.
 
 ```text
 personal-os/
-├── .gitignore                  # Untracked project configuration: dependency/build exclusions
+├── .gitignore
+├── .gitmessage                 # Commit-message template; local Git setup is separate
 ├── README.md
-├── package.json                # Workspace definitions and legacy shell type check
-├── package-lock.json           # Existing dependency lockfile; web installation pending
+├── package.json                # npm workspace definitions and legacy shell type check
+├── package-lock.json           # Committed shell/web/Playwright dependency resolution
 ├── apps/
 │   └── web/
-│       └── package.json        # Untracked project manifest only
+│       ├── package.json
+│       ├── index.html
+│       ├── vite.config.ts
+│       └── src/
+│           └── main.tsx
 ├── packages/
-│   ├── README.md               # Shared-package guide
+│   ├── README.md
 │   └── desktop-shell/
-│       ├── package.json        # Public exports and build/type-check scripts
-│       ├── tsconfig.json       # Untracked project compiler configuration
-│       ├── src/
-│       │   ├── DesktopShell.tsx
-│       │   └── index.ts
-│       └── dist/               # Generated JavaScript, declarations and maps; ignored
+│       ├── package.json
+│       ├── tsconfig.json
+│       └── src/
+│           ├── DesktopShell.tsx
+│           └── index.ts
 └── docs/
     ├── README.md
     ├── DOCUMENTATION-GUIDE.md
@@ -107,18 +122,18 @@ personal-os/
 
 Local support files are separate from the first-party tree above. `.vscode/settings.json` is an untracked, empty editor configuration. `.agents/`, `.codex/`, and `.aws/` are local environment/agent-support directories with no tracked project files or files found in this inspection. Their presence does not establish committed configuration or product functionality. `.git/` contains Git metadata.
 
-The shell's `dist/` is ignored/generated output. Installed `node_modules/` is third-party dependency content: **259 entries remain tracked in Git** despite the existing local `.gitignore` rule. Ignore rules do not untrack committed files. IMP-017 proposes cleanup separately; no dependency cleanup has been performed. Neither generated output nor local environment tooling belongs in the first-party source inventory.
+`packages/desktop-shell/dist/` and `apps/web/dist/` are ignored generated builds. Installed `node_modules/` contains third-party dependencies: **zero entries remain tracked**, following verified IMP-017 cleanup that preserved the local installation per prior owner report. Ignore rules alone do not untrack files. Future web `test-results/` and `playwright-report/` outputs are also ignored. Generated output and local environment support are excluded from the first-party tree.
 
 | Classification | Paths and meaning |
 | --- | --- |
-| Current implementation | `packages/desktop-shell/src/` contains the standalone, unstyled React presentation frame and public types. The package exports `dist/index.js` and `dist/index.d.ts` through `@personal-os/desktop-shell`; build before consuming it. `apps/web` contains only its manifest. |
-| Historical — absent starters | Earlier references to `apps/web/src/shell/`, `apps/web/src/main.tsx`, and an `apps/api` starter do not describe files in this checkout. No starter application or API endpoints remain here. `docs/archive/` is also absent. |
+| Current implementation | `packages/desktop-shell/src/` contains the standalone, unstyled React presentation frame and public types. The package exports `dist/index.js` and `dist/index.d.ts` through `@personal-os/desktop-shell`; build before consuming it. `apps/web` contains the HTML entry, React bootstrap, Vite configuration and manifest; it composes the public shell. |
+| Historical — absent starters | Earlier references to `apps/web/src/shell/` and an `apps/api` starter do not describe files in this checkout. No starter application or API endpoints remain here. `docs/archive/` is also absent. |
 | Planned architecture — absent from checkout | `apps/desktop`, `apps/file-manager`, `apps/ai-assistant`; `packages/app-runtime`, `packages/app-sdk`, `packages/os-api`, `packages/protocols`, `packages/ui`, `packages/tsconfig`, `packages/design-system`; `backends/`, `services/`, `platform/`, `kernel/`, and `tests/`. |
 | Absent development tooling | `.devcontainer/`, `.github/workflows/`, and `scripts/` are not present; no repository-provided Codespaces configuration, CI workflow, or documentation checker is implemented. |
 
 The proposed architecture keeps frontend hosts thin: they compose public shell/runtime interfaces. The shell owns presentation, the future runtime owns application lifecycle, and trusted services own privileged authorization. Independent applications should use the future SDK and OS API rather than private host or shell internals. An alternative desktop host must have a distinct role without duplicating the shell. Browser desktop state is separate from the future hardware kernel.
 
-See the [Shared Packages Guide](packages/README.md) for dependency conventions and the [Improvement Register](docs/IMPROVEMENTS.md) for planning and verification. The package guide has local accuracy updates; use the actual checkout when checking current implementation status. [PWOS-001](docs/foundation/PWOS-001-project-charter.md) establishes project scope; [PWOS-002](docs/architecture/PWOS-002-system-architecture-foundation.md) governs ownership. Future `@personal-os/app-sdk` and `@personal-os/os-api` identities are proposed contracts, not existing packages or stable APIs.
+See the [Shared Packages Guide](packages/README.md) for dependency conventions and the [Improvement Register](docs/IMPROVEMENTS.md) for planning and verification. The package guide and other documentation retain stale implementation snapshots requiring separate IMP-015 reviews; use the actual checkout and attributed evidence for current status. [PWOS-001](docs/foundation/PWOS-001-project-charter.md) establishes project scope; [PWOS-002](docs/architecture/PWOS-002-system-architecture-foundation.md) governs ownership. Future `@personal-os/app-sdk` and `@personal-os/os-api` identities are proposed contracts, not existing packages or stable APIs.
 
 ## Useful commands
 
@@ -126,13 +141,18 @@ Run from the repository root:
 
 | Command | Purpose |
 | --- | --- |
-| `npm install` | Install workspace dependencies |
+| `npm ci` | Install from the committed lockfile; clean-checkout reproducibility is still a GP-02 gate |
+| `npm install` | Install/synchronize intentional workspace dependency changes; review manifest and lockfile |
 | `npm ls --depth=0` | Inspect installed top-level workspace dependencies |
 | `npm run typecheck -w @personal-os/desktop-shell` | Check shell source with the strict package tsconfig without emitting files |
 | `npm run build -w @personal-os/desktop-shell` | Emit JavaScript, type declarations, and both map types into the package’s `dist/` directory |
 | `npm run typecheck:desktop-shell` | Run the existing root check with inline compiler options; does not use the package tsconfig |
+| `npm run dev -w @personal-os/web -- --port 5173 --strictPort` | Launch Vite for the private Codespaces preview |
+| `npm run build -w @personal-os/web` | Build web production assets after building the shell |
+| `npm run preview -w @personal-os/web -- --port 4173 --strictPort` | Serve the built web artifact locally for separate validation |
+| `npm run test:e2e -w @personal-os/web` | Declared `playwright test` command; do not run yet without browser installation, configuration and tests |
 
-The root manifest does not define `dev`, `build`, `test` or `docs:check` scripts. The web workspace declares Vite scripts, but its dependencies and browser entry remain pending; they are not ready-to-run preview instructions. No `scripts/lint-docs.mjs` exists in this checkout. Shell checks do not establish browser, production or Raspberry Pi readiness.
+The root manifest does not define `dev`, `build`, `test` or `docs:check` scripts. The web workspace has runnable Vite scripts and installed dependencies. Playwright tooling is installed, but Chromium installation has not been reported complete and no Playwright config or test sources exist. Accessibility testing and GitHub Actions testing CI remain pending under IMP-007. No `scripts/lint-docs.mjs` exists in this checkout. Shell checks do not establish browser, production or Raspberry Pi readiness.
 
 ## Documentation
 
@@ -168,6 +188,8 @@ Do not commit credentials, personal files, model weights, databases, or other pr
 
 ## Next working experience
 
-**D0 — Day-one desktop:** Shell package configuration and build verification are complete (IMP-002). Next priority is IMP-001: install the declared web dependencies, add the minimal host files, render `DesktopShell` through its public package export, then run a development server and verify rendering and reload through the forwarded Codespaces URL. **The Personal OS desktop is not yet viewable in the browser; no preview is running.** Backend/API verification remains separate work because no API is implemented. Then **D1 — Useful local workspace** will add one genuinely useful in-house application with non-sensitive persisted data. Acceptance criteria remain in [PWOS-001](docs/foundation/PWOS-001-project-charter.md#8-use-from-day-one-delivery-plan).
+**Current implementation priority: IMP-007 Stage A within GP-02.** GP-01 is Completed and IMP-001 Verified based on owner-reported acceptance of the first reusable-shell browser preview. This does not certify every broader D0 charter function. Playwright Test 1.64.1 and its command are installed; next establish compatible Chromium/system dependencies, isolated local Vite test configuration and repeatable desktop/mobile smoke tests, one file/task at a time. Accessibility criteria/testing follow in Stage B, then a dedicated testing CI workflow in Stage C.
 
-**Possible extra D0 deliverable:** a non-sensitive, read-only GitHub Pages demo after a working static build and deployment workflow are tested. Neither this extra preview nor Pi production hosting has been implemented.
+**GP-02 remains In progress, acceptance pending:** Require reproducible clean-checkout installation and shell/web builds, correct `/personal-os/` asset paths, passing smoke/accessibility/CI criteria, and production-preview navigation/refresh evidence. GP-03 remains a separate safety and explicit owner-publication approval gate; GP-04 deployment and GP-05 live-site verification remain pending. No public deployment is approved or claimed.
+
+Then **D1 — Useful local workspace** targets a useful in-house application with non-sensitive persisted data; backend/API implementation and verification remain separate. Accepted delivery scope remains in [PWOS-001](docs/foundation/PWOS-001-project-charter.md#8-use-from-day-one-delivery-plan). The minimal Pages demo needs no storage, AI, runtime or kernel implementation and cannot bypass its release gates.
