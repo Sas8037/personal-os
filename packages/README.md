@@ -1,8 +1,8 @@
 # Personal OS — Shared Packages
 
-The `packages/` workspace currently contains one implemented package: `desktop-shell`. Public application contracts, shared UI, and shared development tooling remain planned. The actual Codespaces checkout is the implementation source of truth; the inventory below reflects the checkout reviewed on 2026-10-29.
+The `packages/` workspace currently contains one implemented package: `desktop-shell`. Public application contracts, shared UI, and shared development tooling remain planned. The actual Codespaces checkout is the implementation source of truth; the inventory below reflects the checkout reviewed on 2026-10-31.
 
-The shared desktop shell must remain **deployment-neutral**: no imports from a GitHub Pages-only web host, no hardcoded `github.io` paths, and no direct knowledge of Pi addresses or privileged credentials. A future frontend host chooses a deployment profile (public mock/demo or private authenticated service) and provides only the capabilities available in that environment. A missing backend must be presented as unavailable rather than silently treated as authorized or operational.
+The shared desktop shell must remain **deployment-neutral**: no imports from a GitHub Pages-only web host, no hardcoded `github.io` paths, and no direct knowledge of Pi addresses or privileged credentials. A frontend host chooses a deployment profile (public mock/demo or private authenticated service) and provides only the capabilities available in that environment. A missing backend must be presented as unavailable rather than silently treated as authorized or operational.
 
 **Architecture authority:** [PWOS-002 — System Architecture Foundation](../docs/architecture/PWOS-002-system-architecture-foundation.md). This README explains package organization and development practices; it does not supersede approved architectural decisions.
 
@@ -10,7 +10,7 @@ The shared desktop shell must remain **deployment-neutral**: no imports from a G
 
 | Package | Import name | Purpose | Current state |
 | --- | --- | --- | --- |
-| [`desktop-shell/`](desktop-shell/) | `@personal-os/desktop-shell` | Current implementation: reusable presentation frame and public status/props types; window management, launcher, dock behavior, panels, and widgets remain future work | Strict package tsconfig, build/typecheck scripts, public exports, generated JavaScript/declarations/maps verified per prior owner-reported evidence (IMP-002, 2026-10-29); browser integration pending (IMP-001) |
+| [`desktop-shell/`](desktop-shell/) | `@personal-os/desktop-shell` | Current implementation: reusable presentation frame and public status/props types; window management, launcher, dock behavior, panels, and widgets remain future work | Strict package tsconfig, build/typecheck scripts, public exports, generated JavaScript/declarations/maps verified per prior owner-reported evidence (IMP-002, 2026-10-29); public-package browser integration implemented; GP-01 accepted per owner report (IMP-001 Verified) |
 | `app-runtime/` | `@personal-os/app-runtime` (proposed) | Application discovery, lifecycle, host integration, and isolation coordination | Planned but absent; no directory or manifest |
 | `app-sdk/` | `@personal-os/app-sdk` (proposed) | Public app-facing interfaces, manifest types, and lifecycle contracts | Planned but absent; no implemented contracts |
 | `os-api/` | `@personal-os/os-api` (proposed) | Backend-neutral system service contracts and errors | Planned but absent; no implemented API |
@@ -21,16 +21,16 @@ The shared desktop shell must remain **deployment-neutral**: no imports from a G
 
 **Historical/removed claims:** Earlier documentation described `ui` and `tsconfig` as minimally implemented and `app-sdk`, `os-api`, and `protocols` as existing reserved packages/placeholders. None of these directories exists in this checkout. Their roles above describe planned architecture, not retained starter code.
 
-The existing shell directory contains `package.json`, `tsconfig.json`, `src/DesktopShell.tsx`, `src/index.ts`, and generated `dist/` output. On-disk presence and Git tracking are distinct: `dist/` is ignored build output; the package manifest, tsconfig, and source files are now tracked and committed. The File Registry records an earlier tracking snapshot and needs a separate refresh. Environment-specific tooling directories outside `packages/` do not establish tracked project components.
+The existing shell directory contains `package.json`, `tsconfig.json`, `src/DesktopShell.tsx`, `src/index.ts`, and generated `dist/` output. On-disk presence and Git tracking are distinct: `dist/` is ignored build output; the package manifest, tsconfig, and source files are now tracked and committed. The [File Registry](../docs/FILE-REGISTRY.md) now includes the tracked browser HTML, React entry and Vite configuration, with evidence limits. Environment-specific tooling directories outside `packages/` do not establish tracked project components.
 
 Package existence does **not** imply a stable or production-ready API. Check each package's `package.json`, documented exports, and tests before depending on it.
 
 ## Packages versus applications
 
-- `apps/` is intended for runnable hosts and independently owned applications. Currently `apps/web` contains only `package.json`; dependency installation and browser integration are pending. It has no HTML entry, configuration, or source files, and no browser preview is running. `apps/file-manager` is planned and absent.
+- `apps/` is intended for runnable hosts and independently owned applications. Current `apps/web` is an implemented React/Vite host: `index.html` loads `src/main.tsx`, which mounts DesktopShell through `@personal-os/desktop-shell`; `vite.config.ts` integrates React and a validated, exact Codespaces host allowance. The host displays truthful offline status; no backend, persistent storage, AI or application runtime is connected. `apps/file-manager` is planned and absent.
 - `packages/` contains code or contracts intended for reuse across hosts, applications, or services.
 - Future launcher, dock, About panel, and window chrome implementations belong to the **desktop shell**. They are not standalone applications merely because the user can interact with them.
-- The browser host should eventually compose the public desktop-shell and runtime interfaces, not own their private implementations.
+- The browser host already composes the public desktop-shell interface. Future runtime integration remains Planned; the host does not own shell or runtime internals.
 
 In particular, standalone applications must not import `apps/web/src/` or private desktop-shell internals. They should use supported `@personal-os/app-sdk` and `@personal-os/os-api` contracts when those contracts are implemented.
 
@@ -56,7 +56,7 @@ These are **target dependency rules**. Shared source code does not cross a secur
 6. Keep dependencies directional and avoid circular dependencies between contracts and implementations.
 7. Declare runtime, peer, and development dependencies in each package's own manifest as applicable.
 
-Only `desktop-shell` currently exists as a package and exposes a public entry point. Do not add placeholder exports that falsely suggest implemented functionality.
+Only `desktop-shell` currently exists under `packages/` and exposes a public entry point; the web host is a separate workspace under `apps/`. Do not add placeholder exports that falsely suggest implemented functionality.
 
 ## Adding or changing a package
 
@@ -67,20 +67,23 @@ Only `desktop-shell` currently exists as a package and exposes a public entry po
 5. Update this directory guide when a package is added, renamed, retired, or changes status.
 6. Update the governing architecture document only if the change revises an accepted architectural decision.
 
-The root workspace is configured in [`../package.json`](../package.json) with `apps/*` and `packages/*`. The initial shell installation and TypeScript check were confirmed on 2026-10-28. The web manifest was added later; installing its dependencies and updating the lockfile remain pending. These are setup commands from the repository root, not evidence of a completed web installation:
+The root workspace is configured in [`../package.json`](../package.json) with `apps/*` and `packages/*`. The committed root [`package-lock.json`](../package-lock.json) records installed shell/web dependencies and exact Playwright Test `1.64.1` tooling. From the repository root, use the lockfile for a clean installation, then build the shell before the web host consumes its compiled exports:
 
 ```bash
-npm install
+npm ci
 npm ls --depth=0
 npm run typecheck -w @personal-os/desktop-shell
 npm run build -w @personal-os/desktop-shell
+npm run build -w @personal-os/web
 ```
 
-Commit the generated root `package-lock.json` for reproducible installs. The root `.gitignore` excludes `node_modules/` and `/packages/desktop-shell/dist/`; existing tracked dependency files remain tracked. The verified package build emits `DesktopShell.js` and `index.js`, their `.js.map` files, `DesktopShell.d.ts` and `index.d.ts`, and their `.d.ts.map` files into `dist/`. Build before consuming the package, and rebuild after source changes.
+`npm ci` replaces local installed dependencies using the committed lockfile; clean-checkout reproducibility remains a GP-02 acceptance check, not a result rerun here. Use `npm install` for intentional dependency changes and review/commit the generated root lockfile with the relevant manifest. Do not fabricate lockfile entries.
 
-The package scripts are `typecheck: tsc -p tsconfig.json --noEmit` and `build: tsc -p tsconfig.json`. Its configuration targets ES2022 with ESNext modules, Bundler resolution, React JSX, `src` as the source root, and `dist` as output. It enables declaration output, source maps, declaration maps, and `noEmitOnError`, plus `strict`, `noUncheckedIndexedAccess`, `noFallthroughCasesInSwitch`, and `isolatedModules`. The existing root `typecheck:desktop-shell` script uses inline compiler options instead. Prior owner-reported evidence records successful workspace type checking, compilation, and public JavaScript/type entry resolution on 2026-10-29. Configuration was published in commit `9ca6fc081c2a2367cf278bc2fc268d567ac05c9c`; no compiler or browser tests were rerun for this documentation review. Browser rendering remains unverified.
+The root `.gitignore` excludes `node_modules/`, shell/web `dist/` and web Playwright `test-results/` and `playwright-report/`. Fresh Git inspection confirms **zero tracked node_modules entries** after IMP-017; ignore rules alone do not untrack files. The shell build emits `DesktopShell.js` and `index.js`, their `.js.map` files, `DesktopShell.d.ts` and `index.d.ts`, and their `.d.ts.map` files into ignored `dist/`. Rebuild after source changes before consuming the package.
 
-A future frontend host satisfying the shell’s React and React DOM `^19.2.0` peer dependencies imports the public package entry:
+The package scripts are `typecheck: tsc -p tsconfig.json --noEmit` and `build: tsc -p tsconfig.json`. Its configuration targets ES2022 with ESNext modules, Bundler resolution, React JSX, `src` as the source root, and `dist` as output. It enables declaration output, source maps, declaration maps, and `noEmitOnError`, plus `strict`, `noUncheckedIndexedAccess`, `noFallthroughCasesInSwitch`, and `isolatedModules`. The existing root `typecheck:desktop-shell` script uses inline compiler options instead. Prior owner-reported evidence records successful workspace type checking, compilation, and public JavaScript/type entry resolution on 2026-10-29. Configuration was published in commit `9ca6fc081c2a2367cf278bc2fc268d567ac05c9c`; prior Codex tasks also passed shell typecheck/build and web production build, including the Playwright dependency task. GP-01 browser acceptance is complete based on owner-reported rendering, truthful offline status, refresh, usable desktop/mobile layouts and a clean Incognito console. These are distinct evidence sources; no install, compiler, build or browser tests were rerun for this documentation update. Fresh checks cover paths, tracking, declarations, public exports and links.
+
+The existing web host uses React/React DOM `19.3.1`, satisfying the shell’s `^19.2.0` peers. Its [`main.tsx`](../apps/web/src/main.tsx) imports the public component; consumers may also import its exported props type:
 
 ```tsx
 import { DesktopShell } from '@personal-os/desktop-shell';
@@ -89,14 +92,27 @@ import type { DesktopShellProps } from '@personal-os/desktop-shell';
 
 The `exports` map resolves ESM imports to `./dist/index.js` and TypeScript declarations to `./dist/index.d.ts`. The output targets a bundler-based frontend host. Avoid private `src/` and `dist/` imports. The package build does not start a browser host or establish browser smoke-test coverage.
 
+## Browser host and testing foundation
+
+The web workspace declares `dev: vite --host 0.0.0.0`, `build: vite build`, `preview: vite preview --host 0.0.0.0` and `test:e2e: playwright test`. After building the shell, run from the repository root:
+
+```bash
+npm run dev -w @personal-os/web -- --port 5173 --strictPort
+```
+
+For Codespaces, forward port 5173 privately. Vite derives the exact allowed forwarded hostname from environment values; the browser host is a reusable-shell preview, not an implemented service backend. See the [root quick start](../README.md#quick-start--github-codespaces) for build and production-preview commands.
+
+`@playwright/test` `1.64.1` is an exact web development dependency, with matching `playwright` and `playwright-core` in the root lockfile. The `test:e2e` script exists, but Chromium installation has not been reported complete and `apps/web/playwright.config.ts` and `apps/web/tests/smoke.spec.ts` are Planned and absent. Automated browser tests are not implemented; accessibility integration and testing CI are pending. Do not interpret installed tooling as a passing suite or run `test:e2e` before its prerequisites exist. IMP-007 Stage A will establish isolated local Chromium smoke tests, followed by accessibility in Stage B and dedicated testing CI in Stage C. GP-02 remains In progress, acceptance pending.
+
 ## Implementation sequence
 
 Work is intentionally proceeding **one repository file at a time**:
 
 1. Establish the `desktop-shell` source-level public boundary (**done**: `src/index.ts` re-exports `DesktopShell` and its props; the manifest exposes the built public entry).
 2. Add package-specific TypeScript configuration and manifest exports (**verified**: strict type checking, build output, and public entry resolution; IMP-002 complete).
-3. **Next priority (IMP-001):** Integrate a web host through public package interfaces to make the shell visible in the browser. Start from the existing manifest-only `apps/web`; historical starter source files are absent.
-4. Consider the proposed public static demo profile for GitHub Pages after explicit approval, using mock data and keeping owner-private Pi services out of that build.
-5. Introduce the application runtime and app-facing contracts behind tested behavior.
+3. Integrate the thin React/Vite web host through public package exports (**implemented**); GP-01 Completed and IMP-001 Verified per owner-reported browser acceptance. Legacy starter shell components remain absent.
+4. **Current priority: IMP-007 Stage A / GP-02.** Establish repeatable automated smoke tests, then accessibility acceptance and CI; also verify reproducible static builds, `/personal-os/` assets and production-preview routing/refresh.
+5. Keep GP-03 public-demo safety and explicit owner approval separate; GP-04 deployment and GP-05 live verification remain pending. No public deployment is approved or claimed.
+6. Introduce the Planned application runtime and app-facing contracts behind tested behavior as separately scoped future work.
 
-This sequence describes intent, not completed functionality. See [PWOS-001 — Project Charter](../docs/foundation/PWOS-001-project-charter.md) for project scope and milestones, and the [Documentation Guide](../docs/DOCUMENTATION-GUIDE.md) for governing document conventions.
+The labels distinguish completed evidence from remaining plans; browser acceptance does not imply every D0 charter capability is implemented. See [PWOS-001 — Project Charter](../docs/foundation/PWOS-001-project-charter.md) for project scope and milestones, and the [Documentation Guide](../docs/DOCUMENTATION-GUIDE.md) for governing document conventions.
