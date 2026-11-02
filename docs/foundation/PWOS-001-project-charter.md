@@ -2,10 +2,10 @@
 id: "PWOS-001"
 title: "Project Charter"
 type: "charter"
-version: "0.12"
-status: "accepted"
+version: "0.13"
+status: "proposed"
 scope: "project"
-last_reviewed: "2026-10-28"
+last_reviewed: "2026-11-02"
 superseded_by: null
 ---
 
@@ -14,6 +14,10 @@ superseded_by: null
 
 **Repository:** `personal-os` (formerly `personal-web-os`)  
 **Documentation home:** [Documentation Index](../README.md)
+
+**Proposal status:** v0.13 is proposed for owner review, not approved or effective. Accepted v0.12 remains authoritative on `main`; it is not superseded by this topic-branch proposal. The historical approval below applies only to v0.12.
+
+**Revision summary (2026-11-02):** Correct repository and browser/testing facts, distinguish Historical starters from Current implementation and Planned architecture, and preserve all accepted objectives, scope, ownership, security principles and D0–D4 requirements. The manual-check replacement in §11.2 is a proposed governance-procedure correction requiring explicit owner approval; factual accuracy does not automatically approve this revision. No implementation or browser tests were run for this document revision.
 
 **Review note:** Version 0.12 was formally accepted by the project owner on 2026-10-28. It establishes project direction and early delivery gates; [PWOS-002](../architecture/PWOS-002-system-architecture-foundation.md) is the accepted detailed architecture baseline. Approval does not mean the proposed product capabilities are implemented.
 
@@ -86,7 +90,7 @@ The expected project-site path is `/personal-os/`, subject to actual GitHub repo
 
 ## 4. Architecture and evolution
 
-The intended architectural layers are **frontend host**, **desktop shell**, **application runtime**, **standalone applications and public SDK**, **OS API and privileged services**, **execution backend**, and **kernel/hardware**. Applications should depend on documented OS APIs instead of Linux-specific facilities wherever practical. **Standalone userland applications** belong to monorepo workspaces under `apps/*`, separate from the browser desktop shell. They will integrate through `@personal-os/app-sdk` and `@personal-os/os-api` once these public contracts are designed and implemented; these package names are currently reserved but do not yet expose working interfaces.
+The intended architectural layers are **frontend host**, **desktop shell**, **application runtime**, **standalone applications and public SDK**, **OS API and privileged services**, **execution backend**, and **kernel/hardware**. Applications should depend on documented OS APIs instead of Linux-specific facilities wherever practical. **Standalone userland applications** belong to monorepo workspaces under `apps/*`, separate from the browser desktop shell. They will integrate through `@personal-os/app-sdk` and `@personal-os/os-api` once these public contracts are designed and implemented; these are proposed package identities, not existing reserved workspaces; no corresponding package directories, manifests or implemented contracts exist.
 
 ### 4.1 Target ownership boundaries
 
@@ -131,9 +135,9 @@ flowchart TD
     Backends -. future .-> Original
 ```
 
-The shell presents the desktop; the runtime hosts and manages applications. **Neither the shell nor the app SDK grants privileged authority by itself.** Service and backend implementations must enforce permissions at their trust boundaries. The dashed original-kernel path is a research goal and is not operational today. The precise application isolation mechanism, process boundaries and protocol transports must be designed before implementation claims are made.
+The shell presents the desktop; the runtime hosts and manages applications. **Neither the shell nor the app SDK grants privileged authority by itself.** Service and backend implementations must enforce permissions at their trust boundaries. The dashed original-kernel path is a research goal and is not operational today. PWOS-002 selects same-origin HTTPS with JSON request/response bodies for the initial browser-to-service transport. Detailed schemas, version negotiation, application isolation and process boundaries remain pending; the selected transport is an architectural direction, not an implemented service.
 
-The initial implementation is a React/Vite browser shell with a Node.js/Fastify API starter. These are provisional implementation technologies for the web-native stage, not permanent kernel or runtime dependencies.
+The Current implementation is a React/Vite browser host composing the reusable desktop-shell presentation package through its public exports. No Fastify/API starter, backend service or endpoint is implemented in the current checkout. Frontend technologies are not permanent kernel or runtime dependencies.
 
 The following modes are distinct phases with different readiness criteria, not interchangeable names for the same implementation:
 
@@ -151,7 +155,7 @@ The project uses a modular monorepo. The following is the **intended long-term l
 personal-os/
 ├── apps/
 │   ├── web/                 # Thin browser host
-│   ├── api/                 # Current HTTP API host
+│   ├── api/                 # Planned HTTP API host; absent
 │   ├── desktop/
 │   ├── file-manager/
 │   ├── ai-assistant/
@@ -209,9 +213,9 @@ personal-os/
 └── docs/
 ```
 
-The existing `.devcontainer/`, root package files, `README.md`, `apps/web/`, and `apps/api/` remain part of the actual starter repository. The latter two contain the initial working prototype and have **not yet been extracted** into the long-term shared shell/runtime architecture.
+**Current checkout (2026-11-02):** Root workspace manifests/lockfile, README and the separate browser host and presentation package are tracked. `.devcontainer/` and `apps/api/` are absent; there is no current API starter. The [File Registry](../FILE-REGISTRY.md) is the descriptive live-file inventory; proposed layouts above are not proof of implementation.
 
-The implemented web source still has this **actual D0 layout**. It is a verified source-tree snapshot, not the intended final placement:
+**Historical starter layout — absent from the active checkout:** The following tree preserves an earlier reported layout, not a current or independently reverified D0 inventory. Legacy `src/shell/`, `style.css` and the shared-package placeholders are absent. The new tracked `apps/web/src/main.tsx` is a different, Current bootstrap and does not restore the legacy shell:
 
 ```text
 apps/web/src/
@@ -231,11 +235,17 @@ packages/
 └── app-sdk/            # Reserved @personal-os/app-sdk workspace
 ```
 
+**Historical report retained verbatim:** The dated paragraph below records what was reported on October 28. Its starter-presence and missing-export/browser claims no longer describe the current checkout; its earlier test results are not rerun evidence.
+
 **Implementation snapshot update (2026-10-28):** The layout above describes an earlier starter still present in the supplied repository tree. New work is proceeding in `packages/desktop-shell/` independently of `apps/web`. The desktop-shell manifest, `src/index.ts` source exports for `DesktopShell` and public types, and standalone `DesktopShell.tsx` presentation component now exist. The owner confirmed `npm ls --depth=0` and `npm run typecheck:desktop-shell` succeed in Codespaces. There is **no package `exports` map, browser host integration, or working preview URL yet**; the new desktop cannot currently be viewed in a browser. This factual update does not change the accepted charter scope or D0 acceptance requirements.
 
-`shell/context/` governs **browser UI state only** and must not be confused with `kernel/`, which is reserved for original low-level OS research. Launcher and About are **shell chrome**, not deployable userland applications. `apps/file-manager/`, `apps/ai-assistant/`, and future full applications remain separate workspace targets. The registry is currently static and shell-internal; a future manifest and discovery protocol must replace direct coupling before independent app loading is claimed. `packages/os-api/` and `packages/app-sdk/` now reserve workspace identities without exported implementations; `packages/protocols/` remains a future contract directory.
+**Current implementation snapshot (2026-11-02):** Tracked `apps/web/index.html` supplies #root and loads `src/main.tsx`; that React 19 entry uses createRoot/StrictMode, imports DesktopShell from `@personal-os/desktop-shell`, handles a missing root explicitly and supplies truthful offline/no-services status. Tracked `apps/web/vite.config.ts` integrates React and derives an exact trusted Codespaces hostname from validated environment values, retaining localhost defaults and rejecting unrestricted host allowances. Shell `package.json` exports compiled `dist/index.js` and `dist/index.d.ts`; its strict package tsconfig and build/typecheck scripts exist. Build the shell before the web host consumes those exports.
 
-The planned extraction should move shell-owned code into `packages/desktop-shell/` and app-hosting policy into `packages/app-runtime/`, leaving `apps/web/src/` as a thin entry point. The existing UI must continue to build and run throughout that refactor.
+IMP-002 is Verified based on prior owner-reported package/export verification and prior Codex shell typecheck/build results. IMP-001 is Verified and GP-01 Completed based on owner-reported private Codespaces rendering, refresh, truthful offline status, usable ~1280px desktop/~390px mobile layouts and a clean Incognito console. Prior Codex web builds and Host-header/portability checks are separate evidence. The original CSP warning was not reproduced in Incognito; its source is unconfirmed. This document review inspects files, declarations and Git evidence; it does not rerun those checks or establish complete D0 acceptance.
+
+The committed root lockfile v3 records installed workspace dependencies and exact web development dependency `@playwright/test` `1.64.1`; `test:e2e` exists. IMP-017 removed dependency tracking: zero `node_modules/` entries remain tracked, while local installations are ignored. Shell/web build output and Playwright diagnostics are ignored. Chromium/OS setup and an actual headless launch are not confirmed complete; Playwright config and smoke-test source are absent. Automated smoke/accessibility tests and testing CI remain pending under IMP-007; GP-02 is In progress, acceptance pending. No private backend, persistent storage, AI, application runtime or custom kernel is connected or implemented by this preview.
+
+Historical `shell/context/`, launcher/About, static registry and SDK placeholders belonged to the removed starter. Browser UI state never grants kernel or backend authority. `apps/file-manager/` and `apps/ai-assistant/` remain Planned standalone applications; SDK/OS API/protocol packages and application discovery/lifecycle remain Planned. The Current thin host and separate reusable presentation frame already implement the intended ownership separation; future runtime policy belongs to `packages/app-runtime/`, without claiming the removed starter's feature set has been restored. Preserve a working UI as further implementation proceeds.
 
 ### 5.1 Applications — `apps/`
 
@@ -244,7 +254,7 @@ The planned extraction should move shell-owned code into `packages/desktop-shell
 - **`file-manager/`:** Application for browsing, reading, organizing, and managing files through the authorized OS storage API.
 - **`ai-assistant/`:** User interface for local AI, conversations, and explicitly permissioned tool operations.
 
-**User applications must not import private React components, shell state, privileged filesystem paths, kernel details, or a particular execution backend.** Launcher and About remain shell components in `packages/desktop-shell/` after extraction. The future SDK must formalize manifests, lifecycle, permissions and host integration rather than relying on hardcoded cross-workspace imports.
+**User applications must not import private React components, shell state, privileged filesystem paths, kernel details, or a particular execution backend.** Future Launcher and About implementations belong to the shared shell; those legacy components are not currently implemented in the package. The future SDK must formalize manifests, lifecycle, permissions and host integration rather than relying on hardcoded cross-workspace imports.
 
 ### 5.2 Shared contracts — `packages/`
 
@@ -254,11 +264,11 @@ The planned extraction should move shell-owned code into `packages/desktop-shell
 
 This is the primary compatibility boundary that will let applications outlive a change in kernel or hosting model.
 
-The shared shell and app runtime are reusable **implementations**, whereas OS APIs and serialized protocols are **contracts**. A future kernel written in another language need only implement the agreed protocol and service semantics; it need not execute React or TypeScript.
+The shared shell and future app runtime have reusable **implementation** responsibilities, whereas OS APIs and serialized protocols have **contract** responsibilities. Only the presentation shell is currently implemented; runtime, service, backend and kernel implementations remain Planned. A future kernel written in another language need only implement the agreed protocol and service semantics; it need not execute React or TypeScript.
 
 ### 5.3 Execution backends — `backends/`
 
-- **`linux/`:** Initial implementation that connects OS APIs to Linux-hosted services on the Raspberry Pi.
+- **`linux/`:** Planned initial adapter that will connect OS APIs to Linux-hosted services on the Raspberry Pi.
 - **`virtual/`:** Future gateway to services and native processes running inside an original OS virtual machine.
 - **`native/`:** Future adapter for services on an original OS running directly on supported hardware.
 
@@ -276,6 +286,8 @@ The original kernel is a research and development track, not a dependency of the
 
 ### 5.5 Remaining directories
 
+Except for Current `docs/`, these are Planned responsibilities, not existing implementation directories. Requirements, interfaces, decisions and research documentation are future additions, not current files.
+
 - **`services/`:** Privileged user-level functionality, including storage, identity, networking, AI runtime, and application management.
 - **`platform/`:** Boot integration, machine-specific configuration, OS images, and deployment support.
 - **`tests/`:** Unit, integration, security, API conformance, virtual-machine, and hardware tests.
@@ -283,22 +295,24 @@ The original kernel is a research and development track, not a dependency of the
 
 ### 5.6 Documentation organization
 
-The active documentation tree is organized by purpose:
+The Current documentation tree contains:
 
 ```text
 docs/
 ├── README.md
 ├── DOCUMENTATION-GUIDE.md
+├── IMPROVEMENTS.md
+├── FILE-REGISTRY.md
+├── DEVELOPMENT-WORKFLOW.md
 ├── foundation/
-├── requirements/
-├── architecture/
-├── interfaces/
-├── decisions/
-├── roadmap/
-└── research/
+│   └── PWOS-001-project-charter.md
+└── architecture/
+    └── PWOS-002-system-architecture-foundation.md
 ```
 
-The [documentation index](../README.md) lists the **five current project documents**: the repository README, documentation index, documentation guide, this charter and [PWOS-002 — System Architecture Foundation](../architecture/PWOS-002-system-architecture-foundation.md). The [documentation guide](../DOCUMENTATION-GUIDE.md) defines stable identifiers, naming rules, review statuses, and cross-reference conventions. **PWOS-001 and PWOS-002 are accepted.** Earlier drafts elsewhere in the tree are not automatically governing documents.
+`docs/requirements/`, `docs/interfaces/`, `docs/decisions/`, `docs/roadmap/` and `docs/research/` are Planned and absent. Historical drafts are not retained under `docs/archive/` in this checkout.
+
+The [documentation index](../README.md) lists the **five governing project documents**: the repository README, documentation index, documentation guide, this charter and [PWOS-002 — System Architecture Foundation](../architecture/PWOS-002-system-architecture-foundation.md). The [documentation guide](../DOCUMENTATION-GUIDE.md) defines stable identifiers, naming rules, review statuses, and cross-reference conventions. **PWOS-001 v0.12 and PWOS-002 v0.2 are accepted; this v0.13 proposal is not yet authoritative.** The [File Registry](../FILE-REGISTRY.md), [Improvement Register](../IMPROVEMENTS.md), [Development Workflow](../DEVELOPMENT-WORKFLOW.md) and [Shared Packages Guide](../../packages/README.md) are Current non-governing supplementary documents. Historical drafts and future specifications are not automatically governing documents.
 
 ## 6. Development principles
 
@@ -327,13 +341,15 @@ The project follows a **continuously usable prototype** strategy: every stage mu
 | **D3 — Local AI alpha** | Invoke a Pi-hosted local model from an explicitly permissioned assistant UI | Model runs offline from a documented local endpoint; measured latency and memory use; tool calls require scoped authorization | Guaranteed model quality or unconstrained agent access |
 | **D4 — Stable personal service** | Routinely use the private browser OS with recovery procedures | Repeatable deployments, regression tests, monitored storage, rollback and documented recovery verified | Native custom kernel |
 
-**The fastest value path is D0 first.** The supplied earlier starter includes desktop placeholders and health endpoints, but current construction starts with the reusable `desktop-shell` package before host integration. The next implementation steps are package configuration and web-host integration; once the host is connected, launch it in Codespaces, perform the D0 browser smoke test, and fix discovered issues. D0 is **not yet formally accepted**, because a browser-level check of the new experience has not been recorded. D1 makes the environment useful beyond a demo without compromising personal data.
+**The fastest value path remains D0 first.** Package configuration and thin-host integration are implemented; IMP-001/IMP-002 are Verified and the narrower GP-01 preview is Completed with attributed evidence above. D0 is **not yet formally accepted**: the Current presentation frame does not implement actual placeholder-panel open/close interactions or `/health` and `/api/system`, and no complete D0 build/test acceptance record exists. GP-01 does not waive those requirements. Current work is IMP-007 Stage A and GP-02 readiness; D1 remains the subsequent useful-application objective without compromising personal data.
 
 A public GitHub Pages build may be added as **optional D0 demonstration evidence** after the standard Codespaces experience is verified. The published demo cannot fulfill the D0 system-status/API response criterion by substituting fabricated live data; mock status must be labeled clearly. GitHub Pages publication is neither proof of backend readiness nor permission to expose the Pi.
 
 Do not block D1–D4 on kernel research. Keep experimental kernel work isolated from the stable web experience.
 
 ### 8.1 Starter evidence snapshot as of 2026-10-26
+
+**Historical evidence only:** The table below is preserved as the earlier reported snapshot, not independently reverified results or a Current inventory. Its `.devcontainer`, API starter/endpoints, legacy browser shell and package placeholders are absent today; root `npm run build` and `npm test` are not current scripts. The current `main.tsx` is new bootstrap code. These historical claims do not establish live endpoint behavior or present build/test success.
 
 | Item | Status | Evidence or limitation |
 | --- | --- | --- |
@@ -347,7 +363,7 @@ Do not block D1–D4 on kernel research. Keep experimental kernel work isolated 
 | Pi 5 ARM64 deployment | Not verified | Physical hardware test and production deployment are future milestones |
 | Original kernel | Research only | No custom kernel boot, scheduling, memory manager or drivers implemented |
 
-**The immediate implementation task is making the exported desktop shell consumable via its package name**, then connecting a web host. Workspace installation and TypeScript checking have been verified in Codespaces, but D0 browser verification is still required before accepting D0. Then implement the D1 narrow OS API and first genuinely useful in-house application. The table records earlier local test results and must be refreshed as evidence changes.
+**Immediate implementation work:** IMP-007 Stage A — confirm compatible Chromium/OS prerequisites and a headless launch, then create isolated local Playwright configuration and repeatable desktop/mobile smoke tests one file at a time. Stage B accessibility acceptance and Stage C dedicated testing CI follow. GP-02 additionally requires clean-checkout installation/build, `/personal-os/` assets, production-preview routing/refresh and passing smoke/accessibility/CI criteria. Its acceptance is pending; GP-03 safety/explicit owner approval, GP-04 deployment and GP-05 live-site verification remain pending. No public deployment is approved. Preserve the Historical table above and record new results separately. D0 panel/API requirements remain unchanged.
 
 ## 9. Deferred capabilities
 
@@ -382,7 +398,7 @@ Mitigation priorities are: a bounded first milestone, explicit capability-based 
 
 ### 11.1 Current governing set
 
-Five documents are recognized as the current project documentation set:
+Five documents form the governing set (accepted PWOS-001 remains v0.12 until this proposal receives explicit approval):
 
 1. [Repository README](../../README.md) — introduction and developer quick start.
 2. [Documentation Index](../README.md) — navigation and authoritative-document list.
@@ -398,12 +414,14 @@ Possible future documents such as requirements specifications, subsystem archite
 2. **Review:** The project owner checks vision, in/out-of-scope boundaries, measurable D0–D4 gates, feasibility assumptions, risks and open decisions.
 3. **Resolve:** Record revisions and answers to blocking questions. Nonblocking open questions may remain with a named decision gate.
 4. **Approve:** The project owner explicitly states approval of the specified charter version; record approver and approval date in the charter. Only then change frontmatter status from `proposed` to `accepted`.
-5. **Synchronize:** Update the root README and documentation index to match the accepted charter; run `npm run docs:check`.
+5. **Synchronize — proposed procedure correction:** After explicit owner approval, update the root README and documentation index to match the accepted charter, scheduling separately authorized file steps. Until IMP-008 implements documentation tooling, manually verify local links/anchors, actual paths, YAML metadata/identifiers, classifications and status consistency; run `git diff --check` and review the complete working/staged diff (including `git diff --cached --check` before committing). No root `docs:check` script exists; do not instruct its execution as a current check. This governance-procedure correction requires explicit owner approval with v0.13 and is not effective merely because it is proposed here.
 6. **Control changes:** Material scope changes require a new version and renewed review; never imply approval from a successful automated check.
 
-**Approval record:** **Approved** — PWOS-001 v0.12, by the project owner (Saul), on **2026-10-28**, following the explicit instruction to review and formally approve this charter. Approval covers the project's vision, objectives, scope, operating constraints, phased delivery strategy, governance and measurable high-level success criteria. Open decisions DEC-01–DEC-10 remain governed by their specified decision gates and do not block charter acceptance.
+**Historical approval record — retained, applies only to v0.12:** **Approved** — PWOS-001 v0.12, by the project owner (Saul), on **2026-10-28**, following the explicit instruction to review and formally approve this charter. Approval covers the project's vision, objectives, scope, operating constraints, phased delivery strategy, governance and measurable high-level success criteria. Open decisions DEC-01–DEC-10 remain governed by their specified decision gates and do not block charter acceptance.
 
-**Review conclusion:** The objectives OBJ-01–OBJ-06, initial single-owner Raspberry Pi 5 scope, web-native-first approach, D0–D4 verification gates, original-kernel research separation, and approved PWOS-002 architecture are mutually consistent. No blocking scope or ownership conflict was identified. Project feasibility and D0 completion must still be verified through their stated evidence gates.
+**v0.13 approval:** Pending explicit owner review and approval; no approver/date is recorded for this proposal. v0.12 remains authoritative on `main` and is not marked superseded.
+
+**Historical v0.12 review conclusion (retained):** The objectives OBJ-01–OBJ-06, initial single-owner Raspberry Pi 5 scope, web-native-first approach, D0–D4 verification gates, original-kernel research separation, and approved PWOS-002 architecture are mutually consistent. No blocking scope or ownership conflict was identified. Project feasibility and D0 completion must still be verified through their stated evidence gates.
 
 ## 12. High-level success criteria
 
