@@ -167,11 +167,13 @@ The root manifest does not define `dev`, `build`, `test` or `docs:check` scripts
 | [File Registry](docs/FILE-REGISTRY.md) | Supplementary living inventory of files, tracking states, responsibilities, relationships and review evidence; refresh its dated snapshot against Git |
 | [Development Workflow](docs/DEVELOPMENT-WORKFLOW.md) | Supplementary editing, verification, staging, Conventional Commit and publication practices |
 
-The **five governing project documents** are the root README, documentation index, documentation guide, PWOS-001 and PWOS-002. The package guide, File Registry, Development Workflow, and Improvement Register are supplementary, non-governing documents; they do not expand that governing set. **PWOS-001 v0.12 and PWOS-002 v0.2 are both accepted.** Other specifications are future work. Document review status is separate from feature implementation status; governed specifications use stable IDs and YAML frontmatter.
+The **five governing project documents** are the root README, documentation index, documentation guide, PWOS-001 and PWOS-002. The package guide, File Registry, Development Workflow, and Improvement Register are supplementary, non-governing documents; they do not expand that governing set. **PWOS-001 v0.13 is the accepted governing charter; PWOS-002 v0.2 remains the accepted architecture foundation.** Other specifications are future work. Document review status is separate from feature implementation status; governed specifications use stable IDs and YAML frontmatter.
 
 The historical requirements draft is absent from this checkout; **PWOS-002 identifies the System Architecture Foundation**. Read [PWOS-002](docs/architecture/PWOS-002-system-architecture-foundation.md) before extracting shared packages or implementing new cross-module contracts.
 
-**Approval record:** The project owner accepted PWOS-001 v0.12 on 2026-10-28 and PWOS-002 v0.2 on 2026-10-27. Together they establish the project charter and system architecture baseline. Acceptance does **not** establish implementation readiness or certify production security.
+**Approval record:** The project owner accepted PWOS-001 v0.13 on 2026-11-02, including its §11.2 documentation-verification procedure correction. Integrated v0.13 supersedes the historical accepted predecessor v0.12, approved on 2026-10-28. PWOS-002 v0.2 remains accepted, approved on 2026-10-27. Together they establish the project charter and system architecture baseline. Acceptance does **not** establish implementation readiness or certify production security.
+
+Under accepted [PWOS-001 §11.2](docs/foundation/PWOS-001-project-charter.md#112-approval-process), manual documentation verification is the current temporary process: check links/anchors, paths, metadata, classifications, review statuses and cross-document consistency, then review complete diffs and whitespace. IMP-008 is the Planned automated documentation checker; incorporate it once implemented and verified. No `npm run docs:check` command currently exists. Document review and explicit owner approval remain separate from successful implementation tests.
 
 ## Development and deployment principles
 
