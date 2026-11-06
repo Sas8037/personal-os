@@ -11,15 +11,17 @@ This is the navigation hub for Personal OS engineering documentation. The projec
 | [Repository README](../README.md) | Project vision, verified checkout inventory and current developer commands | Living entry point |
 | [Documentation Index](README.md) (this file) | Navigation and documentation inventory | Living index |
 | [Documentation Guide](DOCUMENTATION-GUIDE.md) | Naming, IDs, frontmatter, statuses, links and review rules | Living policy |
-| [PWOS-001 — Project Charter](foundation/PWOS-001-project-charter.md) | Objectives, target direction, project scope, staged delivery, risks and owner approval | v0.12 — Accepted (2026-10-28) |
+| [PWOS-001 — Project Charter](foundation/PWOS-001-project-charter.md) | Project vision, objectives, scope, D0–D4 product delivery requirements, risks and owner approval | v0.13 — Accepted (2026-11-02) |
 | [PWOS-002 — System Architecture Foundation](architecture/PWOS-002-system-architecture-foundation.md) | System layers, component ownership and eight approved architectural decisions | v0.2 — Accepted (2026-10-27) |
+
+PWOS-001 v0.13 is the current governing charter, approved on 2026-11-02 including its §11.2 verification procedure. It supersedes historical accepted v0.12, approved on 2026-10-28. PWOS-002 v0.2 remains the accepted architecture baseline, approved on 2026-10-27. Document acceptance establishes governance, not new implementation acceptance.
 
 ### Supplementary documentation (non-governing)
 
 | Guide | Purpose |
 | --- | --- |
 | [Shared Packages Guide](../packages/README.md) | Current and proposed shared packages, public API boundaries, dependency rules and package development workflow |
-| [Improvement Register](IMPROVEMENTS.md) | Living prioritized ideas, tradeoffs, owner decision gates and verification evidence (non-governing) |
+| [Improvement Register](IMPROVEMENTS.md) | Current improvements, implementation/milestone progress, owner decisions and verification evidence (non-governing) |
 | [File Registry](FILE-REGISTRY.md) | Living inventory of actual files, Git tracking states, Current/Planned/Historical classifications, responsibilities and relationships |
 | [Development Workflow](DEVELOPMENT-WORKFLOW.md) | Edit, verify, review, stage, commit, push and confirmation standard, including Conventional Commits |
 
@@ -47,11 +49,11 @@ The reusable `packages/desktop-shell` presentation package has verified strict T
 
 **GP-01 is Completed and IMP-001 Verified**, based on owner-reported private Codespaces rendering, refresh, usable desktop/mobile layouts and a clean Incognito console. Prior Codex checks separately passed shell/web builds, exact-host acceptance and unrelated-host rejection. This index update checks documentation, files and declarations; no implementation or browser tests were rerun. An earlier CSP warning did not reproduce in Incognito; its source remains unconfirmed.
 
-**IMP-007 is Approved, with Stage A implementation underway.** Exact `@playwright/test` 1.64.1 is installed in the web workspace and its `test:e2e` script exists. Chromium installation is not confirmed complete; Playwright configuration and automated browser tests, accessibility tests and testing CI are not implemented. The approved order is **smoke testing → accessibility → testing CI**. Tool installation is not a passing automated suite.
+**IMP-007 is In progress within owner-approved scope, with Stage A implementation underway.** Exact `@playwright/test` 1.64.1 is installed in the web workspace and its `test:e2e` script exists. Chromium installation is not confirmed complete; Playwright configuration and automated browser tests, accessibility tests and testing CI are not implemented. The approved order is **smoke testing → accessibility → testing CI**. Tool installation is not a passing automated suite.
 
 **GP-02 is In progress, acceptance pending:** reproducible clean installation/static build, correct `/personal-os/` assets, passing smoke/accessibility criteria, a passing testing CI pipeline and production-preview validation remain required. GP-03 retains separate public-demo safety and explicit owner-publication approval; GP-04 deployment and GP-05 live-site verification remain pending. GP-02 progress does not authorize publication.
 
-The accepted architecture keeps the web host thin, application lifecycle in a future runtime package, and privileged authorization in trusted backends. Independent apps, SDK/OS API contracts, real file management, persistent storage, authentication, local AI and a native kernel remain Planned. Use the [Shared Packages Guide](../packages/README.md) for package relationships, the [File Registry](FILE-REGISTRY.md) for current paths/tracking and the [repository README](../README.md) for setup. Accepted governing documents state scope and architecture; older implementation snapshots in PWOS-001/PWOS-002 and process guides still require separate IMP-015 review. Their acceptance is not evidence that the proposed subsystems exist.
+The accepted architecture keeps the web host thin, application lifecycle in a future runtime package, and privileged authorization in trusted backends. Independent apps, SDK/OS API contracts, real file management, persistent storage, authentication, local AI and a native kernel remain Planned. Use the [Shared Packages Guide](../packages/README.md) for package relationships, the [File Registry](FILE-REGISTRY.md) for current paths/tracking and the [repository README](../README.md) for setup. Accepted governing documents state scope and architecture; PWOS-001 v0.13 preserves dated snapshots as historical evidence, while living records track current implementation. PWOS-002 implementation descriptions and residual cross-document status notes still need separate IMP-015 review. Accepted architecture is not evidence that proposed subsystems exist.
 
 | Stage | Practical user outcome | Current standing |
 | --- | --- | --- |
@@ -60,6 +62,8 @@ The accepted architecture keeps the web host thin, application lifecycle in a fu
 | **D2 — Private Pi alpha** | Authenticated owner storage with tested backup and restore on the Pi | Planned |
 | **D3 — Local AI alpha** | Offline inference through an authorized assistant UI | Planned |
 | **D4 — Stable personal service** | Repeatable private deployment with verified rollback and recovery | Planned |
+
+D0–D4 are product delivery/capability gates governed by PWOS-001. GP-00–GP-05 are separate static-demo release milestones tracked in the Improvement Register. GP-01/GP-02 completion or a published demo cannot substitute for D0 panel interactions and actual `/health` and `/api/system` responses; **D0 is not formally accepted**. GP-03 safety review and explicit owner publication approval remain required before public deployment.
 
 See [PWOS-001 §8](foundation/PWOS-001-project-charter.md#8-use-from-day-one-delivery-plan) for acceptance evidence and limitations. Kernel research runs separately and is not a gate for the usable web-native experience.
 
@@ -82,9 +86,9 @@ Introduce a new document only when it has a defined purpose, an owner review dec
 1. Check that the charter and both README files describe the same project scope and phase.
 2. Distinguish **document review status** from engineering **implementation and verification**.
 3. Use relative links; do not treat planned directories as proof of working functionality.
-4. Check local links against actual files and review diffs. This checkout has no `scripts/` directory, `scripts/lint-docs.mjs`, root `docs:check` command, or `.github/workflows/` CI configuration. Documentation automation remains proposed (IMP-008); do not present those tools as available checks.
+4. Follow accepted [PWOS-001 §11.2](foundation/PWOS-001-project-charter.md#112-approval-process): manual documentation verification is the current temporary process. Check links/anchors, actual paths, YAML metadata/identifiers, classifications, review statuses and cross-document consistency; review complete working/staged diffs and run `git diff --check` and `git diff --cached --check`. IMP-008 is the Planned automation improvement; incorporate automated checks once implemented and verified. This checkout has no `scripts/lint-docs.mjs`, root `npm run docs:check` command or testing/documentation CI. Checks do not substitute for explicit owner approval or implementation evidence.
 5. For each document update, record which other documents need synchronization, what remains improvable and the next agreed work item.
 
 ## Next action
 
-**Next implementation priority: IMP-007 Stage A / GP-02.** Continue one file at a time with Chromium/system prerequisites, isolated local Playwright configuration and repeatable desktop/mobile smoke tests, then accessibility criteria/testing and a dedicated testing CI workflow. Playwright tooling and output ignore rules are already present. GP-02 acceptance remains pending, and GP-03 public-demo safety/explicit owner approval cannot be bypassed. Keep stale workflow, register and PWOS implementation descriptions scheduled as separate documentation tasks; preserve accepted architectural decisions and prior evidence.
+**Next implementation priority: IMP-007 Stage A / GP-02.** Continue one file at a time with Chromium/system prerequisites, isolated local Playwright configuration and repeatable desktop/mobile smoke tests, then accessibility criteria/testing and a dedicated testing CI workflow. Playwright tooling and output ignore rules are already present. GP-02 acceptance remains pending, and GP-03 public-demo safety/explicit owner approval cannot be bypassed. Keep residual register/registry/guide version/status synchronization and PWOS-002 implementation review scheduled as separate documentation tasks; preserve accepted architectural decisions and prior evidence.
