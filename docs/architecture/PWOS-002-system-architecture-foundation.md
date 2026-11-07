@@ -2,18 +2,20 @@
 id: "PWOS-002"
 title: "System Architecture Foundation"
 type: "architecture"
-version: "0.2"
-status: "accepted"
+version: "0.3"
+status: "proposed"
 scope: "system"
-last_reviewed: "2026-10-27"
+last_reviewed: "2026-11-07"
 superseded_by: null
 ---
 
 # PWOS-002 — System Architecture Foundation
 
-**Governing charter:** [PWOS-001 — Project Charter](../foundation/PWOS-001-project-charter.md)  
+**Governing charter:** [PWOS-001 — Project Charter](../foundation/PWOS-001-project-charter.md) v0.13, accepted by the owner on 2026-11-02\
 **Documentation conventions:** [Documentation Guide](../DOCUMENTATION-GUIDE.md)  
-**Document status:** **Accepted architecture baseline**. The project owner explicitly authorized review and formal approval of v0.2 on 2026-10-27. Acceptance approves the eight design selections in §12; it does **not** mean the planned subsystems are implemented or security-certified.
+**Document status:** **Proposed v0.3 successor — owner approval pending; not accepted or effective.** PWOS-002 v0.2 remains the accepted architectural authority on `main`. The owner's 2026-10-27 approval applies to v0.2, not this proposal. The eight accepted ARC selection rows in §12 are retained unchanged; this revision changes no approved architectural decisions and does not mark v0.2 superseded. Document acceptance is separate from implementation readiness and security verification.
+
+**Revision summary (2026-11-07):** Reconcile TASK-011 findings PWOS2-AUD-001–PWOS2-AUD-018 using the live tracked checkout and accepted PWOS-001 v0.13. Correct removed API/shell and package-existence claims; record the implemented thin React/Vite host and public shell exports; distinguish Historical reports, Current source and Planned responsibilities; clarify milestone, publication and living-record boundaries. Prior owner-reported browser acceptance and Codex build checks remain attributed evidence, not rerun tests. Historical v0.2 approval and review dates are preserved in §13. No application or browser tests ran for this proposed revision.
 
 ## 1. Purpose and scope
 
@@ -72,22 +74,22 @@ Arrows indicate conceptual dependencies or service interaction, **not** mandator
 
 ### 3.1 Architectural layers
 
-| Layer | Target owner | Responsibility | Initial state |
+| Layer | Target owner | Responsibility | Implementation snapshot (2026-11-07) |
 | --- | --- | --- | --- |
-| Web delivery host | `apps/web/` | Browser bootstrap, root composition, routing and deployment entry point | Exists; currently contains shell internals |
-| Alternative host | `apps/desktop/` | Reserved for a separate native/embedded frontend host using public shell/runtime contracts | Placeholder; not activated |
-| Reusable shell | `packages/desktop-shell/` | Desktop, launcher, dock, windows, system panels and widgets | Manifest, source-level component/type exports, and standalone `DesktopShell.tsx` layout present; type checking verified; package-name mapping and host integration pending |
-| Application runtime | `packages/app-runtime/` | Discovery, lifecycle, host integration, and isolation coordination | Proposed; not implemented |
-| Applications | `apps/file-manager/`, `apps/ai-assistant/`, later app workspaces | Independently owned user functionality | Planned placeholders |
-| App SDK | `packages/app-sdk/` | Public app interfaces, manifests, capability requests, lifecycle hooks | Package identity reserved; no public API |
-| OS API | `packages/os-api/` | Backend-neutral service contract types, errors and versioning | Package identity reserved; no public API |
-| Protocols | `packages/protocols/` | Language-neutral serialized schemas and transport contracts | Planned placeholder |
-| Privileged services | `services/` | File, identity, process, networking, AI and application services | Not implemented |
-| Backend adapters | `backends/linux/`, `virtual/`, `native/` | Bind service contracts to a supported execution environment | Planned placeholders |
-| Kernel | `kernel/` | Original boot, scheduling, protection, memory, IPC and hardware work | Research only |
-| Platform | `platform/` | Device support, images, deployment and boot integration | Planned |
+| Web delivery host | `apps/web/` | Browser bootstrap, root composition, routing and deployment entry point | Current thin React/Vite host: HTML entry, React composition through public shell exports and Vite configuration; no legacy shell internals |
+| Alternative host | `apps/desktop/` | Reserved for a separate native/embedded frontend host using public shell/runtime contracts | Planned; directory and implementation absent |
+| Reusable shell | `packages/desktop-shell/` | Desktop, launcher, dock, windows, system panels and widgets | Current presentation frame; package-specific strict tsconfig, build/typecheck scripts and compiled public JavaScript/type exports; web integration implemented, prior verification attributed in §10.1 |
+| Application runtime | `packages/app-runtime/` | Discovery, lifecycle, host integration, and isolation coordination | Planned; directory and implementation absent |
+| Applications | `apps/file-manager/`, `apps/ai-assistant/`, later app workspaces | Independently owned user functionality | Planned; directories and implementations absent |
+| App SDK | `packages/app-sdk/` | Public app interfaces, manifests, capability requests, lifecycle hooks | Planned package identity; directory, manifest and public contracts absent |
+| OS API | `packages/os-api/` | Backend-neutral service contract types, errors and versioning | Planned package identity; directory, manifest and public contracts absent |
+| Protocols | `packages/protocols/` | Language-neutral serialized schemas and transport contracts | Planned; directory and schemas absent |
+| Privileged services | `services/` | File, identity, process, networking, AI and application services | Planned; directory and implementation absent |
+| Backend adapters | `backends/linux/`, `virtual/`, `native/` | Bind service contracts to a supported execution environment | Planned; directories and implementations absent |
+| Kernel | `kernel/` | Original boot, scheduling, protection, memory, IPC and hardware work | Planned research; no kernel source or boot evidence in this checkout |
+| Platform | `platform/` | Device support, images, deployment and boot integration | Planned; directory and deployment implementation absent |
 
-The implemented Fastify API in `apps/api/` is a **status-only starter**, not yet the service gateway described in this target architecture. See [§12](#12-finalized-architecture-decisions) for the selected design boundaries that these modules must eventually implement.
+The earlier Fastify status starter in `apps/api/` is **Historical and absent from the active checkout**. No current `/health` or `/api/system` endpoints are implemented. The service gateway remains Planned. See [§12](#12-finalized-architecture-decisions) for the selected design boundaries that these modules must eventually implement.
 
 ### 3.2 Proposed static-preview deployment profile
 
@@ -101,7 +103,9 @@ The implemented Fastify API in `apps/api/` is a **status-only starter**, not yet
 | AI/storage | Unavailable or clearly marked simulations | Self-hosted inference and storage after D2/D3 validation |
 | Security assumption | **Public and inspectable**; no secrets or private service connectivity | Authenticated and authorized private access subject to threat review |
 
-The shell should render advertised capabilities but not decide privilege. A frontend host must not hardcode public-demo service endpoints inside shared packages. For a future Vite-based Pages build, configure project-subpath assets (`/personal-os/` unless a custom domain changes the base), deterministic client-side navigation/reload behavior, and a static build artifact published by GitHub Actions. Validate direct deep links, missing routes and cache updates before release. Pages cannot execute backend services. **No public Pages preview is currently deployed.**
+The shell should render advertised capabilities but not decide privilege. A frontend host must not hardcode public-demo service endpoints inside shared packages. For a future Vite-based Pages build, configure project-subpath assets (`/personal-os/` unless a custom domain changes the base), deterministic client-side navigation/reload behavior, and a static build artifact published by GitHub Actions. Validate direct deep links, missing routes and cache updates before release. Pages cannot execute backend services. **No public Pages deployment or publication approval is recorded in the project evidence; this review does not independently inspect live-site or repository deployment settings.**
+
+Public publication requires GP-03 safety review and explicit owner approval of the candidate artifact before GP-04 deployment; GP-05 live verification follows. This proposal does not approve those gates. See the [Improvement Register](../IMPROVEMENTS.md#github-pages-release-milestones) for release evidence and current status.
 
 This deployment profile supplements the accepted host-independence and least-authority principles. **Any direct connection from the public demo origin to private Pi services requires its own threat model, consent and architecture approval**; it is out of scope for the static D0 demo.
 
@@ -124,7 +128,7 @@ Cross-layer communication may use local function calls **only within the same tr
 
 ### 4.1 Shared contracts versus shared code
 
-`packages/desktop-shell/` and `packages/app-runtime/` are reusable **implementations**. `packages/os-api/` and `packages/protocols/` are **interfaces**.
+`packages/desktop-shell/` and Planned `packages/app-runtime/` have reusable **implementation responsibilities**. Planned `packages/os-api/` and `packages/protocols/` have **interface responsibilities**. Only desktop-shell currently exists; the runtime and public-contract packages have no directories, manifests or implemented contracts. These ownership categories do not establish implementation or API stability.
 
 A future native File Manager might not use React or TypeScript. It must implement the applicable app/service protocol semantics rather than share browser source code. Portable **behavior** is the compatibility goal; identical binaries, UI frameworks and performance are not guaranteed.
 
@@ -151,7 +155,7 @@ Each independently built application will provide a versioned **JSON manifest** 
 | Lifecycle hooks | Open, activate, suspend/resume where supported, close and cleanup |
 | Isolation policy | Execution domain and restrictions determined by trust level |
 
-**A manifest is a declaration, not permission.** Apps cannot authorize their own privileges; the runtime and privileged services must separately validate authorization. The first runtime will **bundle or pre-register trusted first-party applications**, with a generated/static registry and lazy-loaded app entry points. Runtime installation of arbitrary third-party code is **out of scope** until a separate isolation review. The current static shell registry may remain until a proven host/runtime contract replaces it.
+**A manifest is a declaration, not permission.** Apps cannot authorize their own privileges; the runtime and privileged services must separately validate authorization. The first runtime will **bundle or pre-register trusted first-party applications**, with a generated/static registry and lazy-loaded app entry points. Runtime installation of arbitrary third-party code is **out of scope** until a separate isolation review. The earlier starter had a static shell registry; it is Historical and absent from this checkout. The Current presentation frame has no application registry or lifecycle implementation. The selected future first-party registry approach remains unchanged.
 
 ### 5.3 Proposed lifecycle
 
@@ -185,7 +189,7 @@ Public API design should begin with a **small capability subset** exercised by a
 
 Each approved operation will require: **contract version, inputs, outputs, errors, authorization scope, transport binding, timeout/cancellation behavior, and conformance tests**. The selected initial browser-to-service transport is **same-origin HTTPS with JSON request/response bodies**, described by language-neutral machine-readable schemas. Local or VM backends may use different transports through adapters. A versioned envelope should include operation name, protocol major/minor version, request identifier and structured error code. A major-version mismatch must fail explicitly; minor capabilities are negotiated/discovered rather than assumed. Avoid treating a TypeScript interface alone as a cross-kernel protocol specification.
 
-No public interface is yet considered stable simply because the corresponding package directory has a `package.json`.
+As a general API-stability rule, a package manifest alone does not establish a stable public interface. The proposed OS API, SDK and protocol workspaces and their schemas are absent; the selected transport is Accepted design, not an implemented service.
 
 ## 7. Security and trust boundaries
 
@@ -244,9 +248,9 @@ The **inference engine and model are intentionally not selected yet**: the archi
 | **Virtual/hybrid** | Selected services or programs operate in an original OS guest with a defined host bridge | Research path; requires emulator boot and contract conformance |
 | **Native** | Original kernel and userspace support the agreed service subset on supported hardware | Long-term research path; requires drivers, security and system validation |
 
-`backends/` binds service interfaces to execution environments. It should not change app-facing semantics without explicit capability negotiation and versioning. A shared conformance suite should exercise both supported behavior and expected unsupported-capability errors.
+Planned `backends/` will bind service interfaces to execution environments; no adapter tree exists in the Current checkout. It should not change app-facing semantics without explicit capability negotiation and versioning. A shared conformance suite should exercise both supported behavior and expected unsupported-capability errors.
 
-The experimental kernel remains a distinct low-level codebase with architecture, boot, memory, scheduler, IPC, capability, interrupt and driver responsibilities. The **selected research baseline** is **Rust `no_std` on AArch64**, first booted and tested in a controlled emulator, using a **capability-oriented small privileged core** with explicit message-passing interfaces. Higher-level services and as many drivers as practical should live outside the privileged core. Native Pi support comes only after emulator evidence and hardware bring-up research. This is a **revisable research hypothesis**, not proof that a microkernel architecture will satisfy all performance or hardware needs.
+The Planned experimental kernel will be a distinct low-level codebase with architecture, boot, memory, scheduler, IPC, capability, interrupt and driver responsibilities. No kernel source, boot implementation or emulator evidence exists in the Current checkout. The **selected research baseline** is **Rust `no_std` on AArch64**, first booted and tested in a controlled emulator, using a **capability-oriented small privileged core** with explicit message-passing interfaces. Higher-level services and as many drivers as practical should live outside the privileged core. Native Pi support comes only after emulator evidence and hardware bring-up research. This is a **revisable research hypothesis**, not proof that a microkernel architecture will satisfy all performance or hardware needs.
 
 ## 10. Target repository ownership
 
@@ -311,21 +315,39 @@ personal-os/
 
 ### 10.1 Current state versus target
 
+**Historical starter report — includes owner verification dated 2026-10-28, retained verbatim below.** Its reported `apps/web/src/shell/`, `apps/api/`, shared UI/tsconfig and reserved SDK/API starters are absent from the active checkout. Its missing-export/integration/preview statements no longer describe Current source. Retention of every earlier starter file in Git history was not established by this review, and the reported historical results were not rerun.
+
 The supplied repository snapshot includes an earlier `apps/web/src/shell/` implementation with the launcher, About, dock, window manager, widgets, registry and browser state; `apps/api/` provides status endpoints. Current development is proceeding **independently in `packages/desktop-shell/`**, where `package.json`, `src/index.ts` source-level `DesktopShell`/type exports, and a standalone `DesktopShell.tsx` presentation frame now exist. The owner verified workspace installation and shell TypeScript checking in Codespaces on 2026-10-28; the package still lacks a manifest `exports` map and browser host integration, so the new shell is **not yet viewable through a browser preview URL**. `packages/tsconfig/` and `packages/ui/` provide small shared foundations; `packages/app-sdk/` and `packages/os-api/` reserve identities with **no stable exports**. `packages/app-runtime/` is not implemented. This is a factual status update, not a revision to the accepted architecture decisions.
 
-The reusable shell can be implemented before a new frontend host is started, then connected through documented public exports. If the earlier web starter is reused or migrated, preserve its D0 capabilities. Keep the frontend bootstrap small, but do not force the future kernel or native UI to depend on React.
+**Current tracked implementation snapshot (2026-11-07):** `apps/web/package.json`, `index.html`, `src/main.tsx` and `vite.config.ts` form the thin React/Vite host. HTML supplies #root; React 19 createRoot/StrictMode mounts DesktopShell through `@personal-os/desktop-shell`, handles a missing root explicitly and provides truthful offline/no-connected-services content. Vite integrates React and an exact environment-derived Codespaces hostname allowance, retaining localhost defaults. The host does not own the removed starter's shell internals.
+
+The shell manifest exports compiled `dist/index.js` and `dist/index.d.ts`; `src/index.ts` exposes DesktopShell and its public props/status types. Package-specific `tsconfig.json` defines strict checks, JavaScript/declaration output and both map types; `build` and `typecheck` scripts use that config. Build the shell before the host consumes its public exports. Ignored generated output is not first-party source or fresh verification evidence. `packages/ui/` and `packages/tsconfig/` are absent; the Historical shared foundations are not Current dependencies.
+
+**Verification attribution:** IMP-002 is Verified from prior owner-reported package/type/export checks and prior Codex shell typecheck/build evidence. IMP-001 is Verified and GP-01 Completed from owner-reported private Codespaces rendering, truthful offline status, refresh, usable desktop (~1280px)/mobile (~390px) layouts and a clean Incognito console. Prior Codex web builds, exact-host acceptance, unrelated-host rejection and simulated hostname portability are separate evidence. The earlier CSP warning did not reproduce in Incognito; its source is unconfirmed. This proposal inspects files, declarations and Git state, not live browser behavior or a running server.
+
+**Implementation limits:** The frame supplies header/workspace/dock/overlay composition slots, not a functional launcher, registry, application runtime or interactive window manager. No API host, real system endpoints, standalone applications, SDK/OS API/protocol contracts, private storage, identity, local inference, adapters, Pi deployment or kernel implementation exists here. Absent package identities and target directories remain Planned architectural responsibilities, not reserved workspaces with implemented contracts.
+
+**Testing and static-build readiness:** The committed root lockfile v3 records shell/web dependencies and exact web development dependency `@playwright/test` `1.64.1`; `test:e2e` is defined. Playwright output is ignored. Chromium/OS setup and a headless launch are not confirmed complete; Playwright configuration and smoke sources, accessibility integration and testing CI are absent. No automated browser success is claimed. Vite has no explicit `/personal-os/` base or application routing implementation; production-subpath assets, supported navigation/refresh and production-preview behavior still require verification. GP-02 remains In progress, acceptance pending.
+
+**Living records and authority:** Accepted PWOS-001 v0.13 governs vision, scope, objectives and D0–D4 product requirements; accepted PWOS-002 v0.2 governs architecture while v0.3 remains proposed. The [File Registry](../FILE-REGISTRY.md) is the living, non-governing descriptive inventory; the [Improvement Register](../IMPROVEMENTS.md) tracks improvements, milestone progress and verification evidence. Check the actual checkout when refreshing dated records. Snapshots here are evidence as of their dates, not automatically maintained inventories; routine progress belongs in living records without automatically requiring a new architecture version. Material architectural changes still require explicit change control and owner approval.
+
+**Milestone distinction:** D0–D4 are product capability gates; GP-00–GP-05 are separate static-demo release milestones. GP-01 or GP-02 completion, or a published demo, cannot substitute for actual D0 panel open/close behavior and `/health` and `/api/system` responses. D0 is not formally accepted. GP-03 safety/explicit publication approval and GP-04/GP-05 deployment/live verification remain pending; no public deployment is authorized by this proposal.
+
+The Current thin host and public shell integration replace the obsolete extraction-next-step description; they do not restore the Historical starter's full feature set. Current implementation work is IMP-007 Stage A and GP-02: verify Chromium prerequisites/headless launch, then isolated local smoke configuration/tests, followed by accessibility acceptance and dedicated testing CI. Future runtime and contract work remains separately scoped. Preserve a working preview as development proceeds; do not force the future kernel or native UI to depend on React.
 
 ## 11. Verification and architecture acceptance
 
 | Gate | Evidence required |
 | --- | --- |
 | Repository structure | Workspace/package names resolve; intended import directions are documented; no duplicate owners |
-| Shell extraction | Browser desktop still starts; launcher, dock, About, window interactions and status requests still work |
+| Shell integration and capability verification | Verify the current browser composition; require launcher, dock, About, window interactions and status requests when those capabilities are implemented or claimed. Historical starter behavior is not evidence that they currently work; preserve PWOS-001 D0 panel/API acceptance requirements. |
 | Public API introduction | Contract tests include success, permissions failure, malformed input and unavailable capability |
 | Standalone app support | Independent app builds without importing `apps/web/src/`; documented lifecycle and host interface |
 | Privileged service readiness | Threat review, authn/authz negative tests, persistent data isolation, recovery verification |
 | New backend claim | Conformance suite and supported-capability matrix pass on that backend |
 | Original kernel claim | Reproducible emulator/hardware evidence for the specifically claimed mechanisms |
+
+The former extraction gate described a Historical regression objective, not a passing Current capability set. The shell integration is implemented, but missing interactions/endpoints still require future implementation and tests; no gate is waived by GP-01.
 
 Documentation status and implementation status are separate. **PWOS-002 acceptance** requires owner review of the selected ARC decisions and their explicitly deferred parameters. It does not certify that any listed subsystem works.
 
@@ -343,6 +365,8 @@ The following choices form the **owner-approved PWOS-002 v0.2 architecture basel
 | **ARC-06 — Storage** | Use **SQLite metadata plus SSD-backed file/blob storage**, hidden behind an authorized filesystem service; keep application deployments separate from data. Backup metadata and blobs consistently to separate media. | Small, inspectable self-hosted starting point with clear migration and recovery boundaries. | Define identifier/path rules, schema migrations, transactional consistency, backup retention and restore drills before real files. |
 | **ARC-07 — Local AI** | Keep a **replaceable local inference adapter** behind the private AI service. Do **not** select a model or engine until Pi benchmarks; AI tools always pass explicit service-side permission checks. | Preserves a self-hosted architecture without gambling on an unmeasured inference stack. | Benchmark on chosen hardware, verify offline inference and tool denial, then record the selected engine/model separately. |
 | **ARC-08 — Kernel research** | Begin with **Rust `no_std`, AArch64 emulator-first**, and a **capability-oriented small kernel core** with explicit IPC; put higher services outside the core where practical. | Supports rigorous isolation experiments and avoids making hardware bring-up the first prerequisite. | Validate boot, memory isolation, IPC and exception handling in emulator; reassess privilege split/performance before Pi-native work. |
+
+**Evidence-column context:** The eight rows above are preserved verbatim from accepted v0.2. ARC-01’s extraction/regression wording is a historical transition objective, not a remaining package-integration task or proof that removed starter features survive. ARC-03’s negative tests are required evidence, not recorded test success. Current capabilities and pending verification are distinguished in §§10.1–11. No selected direction, evidence obligation or deferred parameter is changed.
 
 ### 12.1 What is decided versus deferred
 
@@ -362,15 +386,19 @@ Key risks remain premature complexity, privilege inheritance across frontend bou
 
 ## 13. Governance, references and next work
 
-This document elaborates the direction stated in [PWOS-001](../foundation/PWOS-001-project-charter.md). Both documents are now accepted; any future scope conflict must be reconciled explicitly. Acceptance of PWOS-002 does not silently supersede the charter.
+This proposed revision elaborates accepted [PWOS-001 v0.13](../foundation/PWOS-001-project-charter.md), approved on 2026-11-02. PWOS-002 v0.2 remains the accepted architecture baseline; v0.3 is not accepted or effective and owner review/approval remains pending. Any future scope conflict must be reconciled explicitly. Architecture acceptance does not silently supersede the charter or grant product/release acceptance.
 
 **Approval record:** **Approved** — PWOS-002 v0.2, by the project owner (Saul), on **2026-10-27**, following the explicit instruction to review and formally approve this version. Approval covers the architecture boundaries and ARC-01–ARC-08 choices, **not** implementation readiness, unresolved design parameters, or deployment security.
 
-**Review conclusion:** The layer ownership, dependency direction, application trust assumption, selected service contracts, and kernel research direction are internally compatible with PWOS-001. No blocking architecture contradiction was identified. PWOS-001 v0.12 was subsequently accepted on 2026-10-28; future changes to its scope may trigger PWOS-002 review.
+**Historical v0.2 review conclusion (retained):** The layer ownership, dependency direction, application trust assumption, selected service contracts, and kernel research direction are internally compatible with PWOS-001. No blocking architecture contradiction was identified. PWOS-001 v0.12 was subsequently accepted on 2026-10-28; future changes to its scope may trigger PWOS-002 review.
 
-Recommended next work, in order:
+**Review chronology:** Accepted v0.2 records `last_reviewed: "2026-10-27"` and owner approval on that date. Its retained §10.1 report cites owner checks on 2026-10-28; that later factual report is not evidence of a separate architecture approval. TASK-011 audited v0.2 on 2026-11-06 and identified 18 accuracy/clarity findings. This proposed v0.3 review is dated **2026-11-07**; it records no owner acceptance, new implementation acceptance or supersession of v0.2.
 
-1. Extract existing browser shell code into `packages/desktop-shell/` while preserving a working D0 preview.
+**Proposed revision conclusion:** Live source, manifests/lockfile and accepted PWOS-001 v0.13 support the factual corrections above. All eight ARC selections, trust boundaries and deferred decisions remain consistent and unchanged. No blocking architecture conflict was identified. Pending owner approval, main retains accepted v0.2; the proposal and its validation are not approval under §12.2.
+
+Recommended implementation work when resumed, following the separately tracked documentation review:
+
+1. Continue IMP-007 Stage A and GP-02 testing/static-build readiness as described in §10.1; public package/host integration already exists. Preserve unmet D0 requirements and separate GP-03 safety/explicit publication approval.
 2. Define the narrow first-party manifest schema and minimal app runtime against the accepted trust model.
 3. Introduce schema-defined API contracts and test denied, malformed and unsupported-capability requests.
 4. Validate an independent application build without private imports from the web host.
