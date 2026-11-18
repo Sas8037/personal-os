@@ -56,7 +56,7 @@ Verification-only work with no intended content change needs no empty commit. Co
 
 1. **Verify the destination and range.** Confirm repository identity, every effective push URL, the explicit destination branch/ref and the exact source revision. Use fresh remote information. Inspect every outgoing commit's message, files and patch, as well as the aggregate change; a push can publish earlier commits beyond the latest task. For a new branch, identify its intended base and the history being exposed.
 2. **Match authorization.** Every outgoing commit and ref must be within the approved publication scope. If an earlier commit is outside it, stop the push and report it. Use an explicit, narrow destination rather than relying on implicit push defaults; inspect whether configuration would also publish tags or additional refs.
-3. **Inspect automation.** Examine relevant workflow events, branch/tag/path filters, Pages source settings and other repository-side publication triggers. The absence of a committed workflow file does not establish that no automation runs. Authorization must cover any release, site deployment or other publication the push would trigger. If relevant effects cannot be established, report them as unknown and stop the push until the gap is resolved. Do not silently change automation settings.
+3. **Inspect automation.** Examine relevant workflow events, branch/tag/path filters, Pages source settings and other repository-side publication triggers. The absence of a committed workflow file does not establish that no automation runs. Authorization must cover any release, site deployment or other publication the push would trigger. If relevant effects cannot be established, report them as unknown and stop the push until the gap is resolved. Unavailable inspection is missing evidence, not evidence of a problem. Where the agent cannot inspect a repository-side fact, such as whether webhooks exist, an owner statement addressing that fact can resolve that specific gap. Attribute it as owner-reported and not independently verified, and do not extend it beyond what was stated. A factual statement does not authorize additional automation or publication effects. Keep inspection proportional to the authorized operation and identify the specific evidence still needed. Do not ask again for a fact the owner has already stated for the same destination and scope unless there is reason to believe it has changed. Do not silently change automation settings.
 4. **Handle divergence safely.** Inspect remote changes and conflicts before choosing an integration strategy. Do not force-push, rewrite published history or resolve conflicts destructively without explicit authorization. `--force-with-lease` is still a history-replacement operation, not an authorization substitute. A rejected push is a reason to inspect, not to force it through.
 
 Git's [push reference](https://git-scm.com/docs/git-push) explains source/destination refs and push options. These mechanics do not grant project authorization.
@@ -128,6 +128,7 @@ Choose a type that describes what the commit actually contains. The area names t
 ### Commit/push task scope
 
 ```text
+Scope status: proposed | owner-authorized (cite the owner's instruction):
 Repository and expected ID:
 Starting branch and commit:
 Exact changes or commits authorized for inclusion:
@@ -138,7 +139,7 @@ Permitted automation or deployment effects:
 Actions and changes excluded:
 ```
 
-Existing authorization can supply these details; another approval document is unnecessary. Use it without asking for the same permission again. Identify any missing decision that affects the action before proceeding. A multi-file commit scope must identify the previously authorized changes it groups; it does not authorize new multi-file implementation.
+Existing authorization can supply these details; another approval document is unnecessary. A prepared scope remains proposed until the owner's instruction authorizes it; preparing it grants no authority. The template fields record authorization only to the extent that instruction supplies it. Use it without asking for the same permission again. Identify any missing decision that affects the action before proceeding. A multi-file commit scope must identify the previously authorized changes it groups; it does not authorize new multi-file implementation.
 
 ### Commit/push completion report
 

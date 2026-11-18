@@ -12,7 +12,7 @@ The repository blueprint below describes the full intended ownership model. It d
 
 ## Current capabilities
 
-The inspected working tree contains this README, [agent instructions](AGENTS.md), the [communication standard](docs/development/COMMUNICATION-STANDARD.md) and the [task and improvement tracker](docs/planning/TASKS-AND-IMPROVEMENTS.md). These establish project context and working practices. File existence does not establish owner acceptance, commitment or publication.
+The inspected working tree contains this README, [agent instructions](AGENTS.md), the [communication standard](docs/development/COMMUNICATION-STANDARD.md), the [task and improvement tracker](docs/planning/TASKS-AND-IMPROVEMENTS.md) and the [Git workflow](docs/development/GIT-WORKFLOW.md). These establish project context and working practices. File existence does not establish owner acceptance, commitment or publication.
 
 No workspace, Notes application, persistence, private service, AI integration or kernel is implemented. There is no dependency manifest, runnable application source, setup/build script, application test suite, Pages configuration or deployment workflow. No software build, runtime, recovery or deployment success is claimed. Setup commands will be documented when they actually exist and have appropriate verification evidence.
 
@@ -119,7 +119,7 @@ personal-os/
 ├── docs/                                      [existing]
 │   ├── development/                           [existing]
 │   │   ├── COMMUNICATION-STANDARD.md           [existing]
-│   │   └── GIT-WORKFLOW.md                     [planned]
+│   │   └── GIT-WORKFLOW.md                     [existing]
 │   ├── planning/                              [existing]
 │   │   └── TASKS-AND-IMPROVEMENTS.md           [existing]
 │   ├── architecture/                          [planned]
@@ -188,7 +188,8 @@ Future private services, authentication, owner data and privileged AI/tool actio
 | [AGENTS.md](AGENTS.md) | Agent entry point; read the referenced standard and tracker before each task. |
 | [Communication standard](docs/development/COMMUNICATION-STANDARD.md) | Roles, bounded authorization, evidence language, quality expectations and conversation/report templates. |
 | [Tasks and improvements](docs/planning/TASKS-AND-IMPROVEMENTS.md) | Authoritative task, finding and improvement record; proposed changes are incorporated through separately authorized tracker updates. |
+| [Git workflow](docs/development/GIT-WORKFLOW.md) | Commit/push standards and reusable Git templates. |
 
-`docs/development/GIT-WORKFLOW.md` is the planned home for commit/push standards and reusable Git templates. It does not exist yet, so no active link or substitute standard is provided here. Architecture and decision directories are also planned; create documentation only when it preserves consequential knowledge.
+Architecture and decision directories are planned; create documentation only when it preserves consequential knowledge.
 
 Use the existing communication standard for the working cycle and task preparation. Verify repository identity, preserve existing changes, keep each implementation task to its authorized file and report unrelated findings without repairing them. No setup, build, test, commit, push or deployment result should be inferred from this blueprint.

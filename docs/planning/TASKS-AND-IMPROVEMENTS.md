@@ -4,9 +4,9 @@ This is the single development tracker for tasks, repository findings and improv
 
 ## Current objective and immediate next action
 
-The foundation documents are locally implemented and awaiting the applicable owner review. The first functional milestone remains unimplemented: open a browser workspace, open Notes, create and edit multiple notes, save, restart, reopen, export and restore. Keyboard navigation and visible focus are part of that outcome.
+The foundation documents were published to main in commit 3dcd28907b03a1f94750676b7e00d977843668a8; no owner acceptance is evidenced. Codex reports later review corrections to the README, AGENTS.md, the communication standard and the Git workflow as implemented locally and unpublished. The first functional milestone remains unimplemented: open a browser workspace, open Notes, create and edit multiple notes, save, restart, reopen, export and restore. Keyboard navigation and visible focus are part of that outcome.
 
-Immediate next action: owner inspection of this reconciliation, followed by POS-013 as the recommended next single-file implementation task, pending authorization to edit only `README.md`. The bounded stack/environment assessment under POS-005 follows as separately scoped work. Neither task is underway or authorized by this tracker update.
+Immediate next action: the owner decides the next task. POS-013 and the bounded stack/environment assessment under POS-005 remain candidates for separate authorization; neither is underway or authorized by this tracker.
 
 Early GitHub Pages delivery is owner-requested. Its configuration and publication remain separate, unauthorized work. Public accounts, synchronization, local AI and third-party applications are outside the first milestone.
 
@@ -42,6 +42,8 @@ Early GitHub Pages delivery is owner-requested. Its configuration and publicatio
 **Initial inspection, November 14, 2026:** GitHub metadata confirms `Sas8037/personal-os`, repository ID `1455766940`. Local and remote `main` point to `e49882dc7ef23f96ce6eeae31f4f7910b1dc0b7d`. The committed tree contains only `README.md`. The working README is empty after a pre-existing unstaged deletion; `COMMUNICATION-STANDARD.md` exists locally as an untracked file. Both were read directly. No application, dependency manifest, build configuration or tests were found. This is dated evidence, not a live repository-status record. The historical repository was not used as a write destination or code source.
 
 **Fresh inspection, November 15, 2026:** Repository identity and the local/remote `main` revision still match that baseline. The working README now provides project guidance; `AGENTS.md`, the relocated communication standard, this tracker and the Git workflow exist locally. Direct inspection supports the owner-specified POS-003 and POS-011 transitions. No equivalent Git-workflow or focused-README-cleanup entry existed before adding POS-012 and POS-013. Application source, a dependency manifest, application tests and deployment configuration remain absent. The README is modified relative to HEAD; the other documents are untracked. No commit, push, publication or owner acceptance of these working versions is evidenced.
+
+**Publication evidence, November 16, 2026:** Repository history shows commit `3dcd28907b03a1f94750676b7e00d977843668a8` on main (committed November 16, 2026, 19:55 UTC; parent `e49882dc7ef23f96ce6eeae31f4f7910b1dc0b7d`, the November 14 baseline). It added AGENTS.md, the communication standard, the Git workflow and this tracker, and modified README.md. Publication does not establish owner acceptance. The inspection paragraphs above and evidence labeled “Fresh” in the entries below record the November 14 and 15 inspections and are historical. Codex reports later review corrections to the README, AGENTS.md, the standard and the Git workflow as implemented locally and unpublished; these are attributed reports, not a fresh working-tree inspection.
 
 Earlier completion reports in this conversation are attributed reports of local work and checks, not fresh execution results. This reconciliation performs document/content and Git-state inspection; its completion report records Markdown, IDs, links, status consistency and preservation results. No application or recovery tests were run. The source of the added requirements is the owner's current instruction and inspected documents; `README-PROPOSAL.md` and `STACK-DECISION-PROPOSAL.md` are not adopted as project decisions or implementation sources.
 
@@ -95,6 +97,7 @@ Source: the owner's approved Notes workflow, engineering constraints, early Page
   - Link the existing Git workflow and correct its planned/nonexistent descriptions. Consolidate repeated authorization wording and keep the entry page human-readable.
   - Keep detailed test procedures, backup schemas and decision templates outside the README.
 - Dependencies: current project documents and owner authorization of the actual README task. No implementation or verification result exists for this follow-up. The stack assessment follows as separately scoped work under POS-005.
+- Reported partial implementation: Codex reports the Git workflow link and the correction of its planned/nonexistent descriptions (the first clause of the fourth criterion) as implemented locally through a separate README-only correction task. This is an attributed report, unpublished, with no owner acceptance evidenced. This entry’s status, scope and remaining criteria are unchanged; if it is authorized, verify that clause against the README as it then stands.
 
 ## Completed
 

@@ -145,6 +145,7 @@ ChatGPT's substantive planning and review reports and Codex's substantive assess
 Objective:
 Engineering assessment:
 Recommendation:
+Improvement recommendations (or state none justified):
 Owner decision needed, if any:
 Next Codex prompt:
 ```
@@ -156,6 +157,7 @@ Repository baseline:
 Whole-repository findings (start/end coverage):
 Relevant options/tradeoffs:
 Recommended approach:
+Improvement recommendations (or state none justified):
 Limitations:
 Suggested tracker updates:
 Next task:
@@ -165,6 +167,7 @@ Next task:
 
 ```text
 Outcome: completed | partial | blocked; acceptance criteria met/missing
+Repository ID, branch, commit, working changes and local/remote publication state:
 Changed file and preserved existing work:
 Verification:
 Whole-repository findings (start/end coverage):

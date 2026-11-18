@@ -1,6 +1,6 @@
 # Personal OS Agent Instructions
 
-At the start of every task, read [COMMUNICATION-STANDARD.md](docs/development/COMMUNICATION-STANDARD.md) and [TASKS-AND-IMPROVEMENTS.md](docs/planning/TASKS-AND-IMPROVEMENTS.md). The standard defines collaboration and evidence rules; the tracker is the single task, finding and improvement record. Follow their current rules and the owner's explicit task authorization.
+At the start of every task, read [COMMUNICATION-STANDARD.md](docs/development/COMMUNICATION-STANDARD.md) and [TASKS-AND-IMPROVEMENTS.md](docs/planning/TASKS-AND-IMPROVEMENTS.md). The standard defines collaboration and evidence rules; the tracker is the single task, finding and improvement record. Follow their current rules and stay within the owner's explicit task authorization. A one-file change limit does not restrict reading. If the owner explicitly limits reading or repository inspection, honor that limit and report the omitted checks and any resulting limits on the conclusions.
 
 - Use the standard's appropriate communication template and authorization boundaries. Recommendations and tracker statuses do not replace owner decisions; separately authorized tracker updates may lag current instructions.
 - Change only the single file authorized for the task. Explain dependencies on other files and propose separate tasks rather than expanding scope.
