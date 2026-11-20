@@ -18,6 +18,58 @@ Respect the one-file implementation rule. Default to one coherent commit contain
 
 Keep the process proportional. Use existing task instructions and completion reports; no new approval documents, duplicate status logs or empty commits are required. Scale messages and checks to risk, and omit inapplicable template fields instead of leaving empty sections.
 
+## Standing publication authorization
+
+**Grant and activation.** The owner may explicitly grant standing authorization to stage, commit and push eligible work. This document defines the mechanism; its existence does not activate it. Cite the owner instruction supplying the grant, not a proposed prompt, tracker status or general product approval.
+
+The grant must identify the repository and stable ID, source branch, remote destination and branch, eligible task class, permitted operations and external effects, exclusions, and duration or revocation conditions. An active grant applies by default to eligible tasks unless a task explicitly excludes publication. Existing authorization remains effective until changed, subject to its stated conditions.
+
+**Eligible work.** The owner must already have authorized the implementation, naming exactly one permitted file, acceptance criteria and required checks. The file and change must fall within the granted class, the task must not exclude committing or pushing, and implementation and required verification must support publication.
+
+The proposed default class is usable only if included in the owner's grant:
+
+- Application source and tests.
+- Ordinary configuration that does not alter dependencies, automation or deployment.
+- README.md.
+- The tracker, limited to exact owner-authorized edits.
+
+Default exclusions are:
+
+- AGENTS.md, the communication standard and this Git workflow.
+- Dependency manifests and dependency changes.
+- Automation, deployment and repository settings.
+- Generated outputs, including lockfiles, dependency directories, build artifacts and caches.
+
+Self-selected work, suggested follow-ups and discovered repairs are ineligible until the owner authorizes them.
+
+**Commit and push.** Follow [Before committing](#before-committing), [Stage, verify and commit](#stage-verify-and-commit) and [Before pushing](#before-pushing). Confirm that the actual staged version contains exactly the permitted file's authorized changes and that required checks passed on that version. Create one coherent task commit, then perform a normal push to the named destination. No content change means no empty commit.
+
+Before pushing, inspect fresh remote state and all outgoing history. Standing authorization covers exactly the new task commit: no earlier outgoing commits, additional branches or tags. Verify that automation and publication effects remain within the grant. Follow [After pushing](#after-pushing) to verify the destination revision through fresh remote access; if confirmation is unavailable, report the push as unverified and inspect before retrying.
+
+Grouping previously authorized changes across files requires separate, explicit publication authorization covering the complete scope.
+
+**Stop conditions.** Pause the affected action and report the specific issue when:
+
+- Required checks fail or scoped verification is insufficient.
+- Unrelated staged content or unauthorized changes would be included.
+- Identity or destination cannot be established.
+- Outgoing history exceeds the authorized task commit.
+- Remote changes are incompatible, history diverges or the push is rejected.
+- Automation effects are unknown or exceed authorization.
+- A stated premise changes or the task is no longer eligible.
+- Secrets or harmful publication effects are identified.
+- Hooks unexpectedly change files or generated outputs would be included.
+
+Known data-loss or authorization problems require an immediate pause. Pausing does not authorize repair; apply [Proportionate recovery](#proportionate-recovery) only within its authorization rules. Do not bypass a blocker by force-pushing, rewriting history, merging, changing settings or expanding publication scope. Explain whether renewed authorization is needed; unrelated authorization remains effective.
+
+**Evidence and limits.** Attribute and date owner-reported facts. They may resolve only the inspection gaps they address; do not claim independent verification or treat factual confirmation as authorization for additional effects.
+
+Repository publication and Pages deployment are separate effects. If a push would trigger deployment, standing repository-publication authorization alone is insufficient. Generated outputs remain file changes: this section neither settles their treatment under the one-file rule nor authorizes commands that produce them.
+
+Publication never selects a tracker status or establishes owner acceptance. Tracker changes remain separately scoped and specifically authorized.
+
+**Reporting.** Use the existing [Git completion-report template](#commitpush-completion-report), adding a concise statement citing the applicable standing authorization and conditions verified. Report actual commit/push results, remote verification, automation state, remaining local changes and limitations. Do not require a tracker update after every push or create another publication log.
+
 ## Before committing
 
 1. **Establish the baseline.** Verify canonical repository identity, including the expected repository ID, branch, HEAD, remotes, working changes and index. Read applicable instructions and perform the standard's start-of-task consistency check. Do not assume that a URL, branch name or old remote-tracking ref still identifies the intended destination.
