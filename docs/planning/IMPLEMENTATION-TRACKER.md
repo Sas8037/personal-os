@@ -12,7 +12,7 @@ Use this checklist to order implementation, verify running results and reference
 - Original M1 ends when Personal OS opens to Workspace, Notes launches into an accurate empty view and the user can return to Workspace. The proposed implementation is `apps/web/index.html`, with dependency-free HTML, CSS and minimal JavaScript. Editing, saving, reopening, export and restore belong to the broader first functional workflow. [Proposed M1](TASKS-AND-IMPROVEMENTS.md#m1--workspace-and-empty-notes-view), [First functional milestone](../../README.md#first-functional-milestone).
 - Backend integration and GitHub Pages delivery each have separate prerequisites and exit criteria. Neither is an automatic prerequisite for original M1. The local preview serves frontend files over HTTP and has no application backend responsibilities. The backend sequence becomes concrete once a chosen workflow needs a service. GitHub Pages hosts the static frontend. Backend runtime and hosting are separate responsibilities.
 - Group order describes the intended sequence within each workstream. Follow explicit substep prerequisites across groups. Dependencies apply where the selected workflow, artifact or check requires them. Later groups do not authorize selecting tools, creating infrastructure or executing commands. Add implementation detail for M2–M13 when the relevant workflow, dependencies and acceptance criteria are sufficiently defined. Follow the timing and separate owner authorization requirements recorded for CP1–CP4. [Project-wide checkpoints](TASKS-AND-IMPROVEMENTS.md#project-wide-checkpoints).
-- **Open decisions.** Visual direction, verification browser and version, preview command, desktop and narrow verification widths, backend approach and Pages deployment method remain undecided. Record the chosen preview directory, port, bind address and URL when defined. Persistence, hosting and Pages timing depend on the workflow or preview scope the owner selects. [Preview and unresolved decisions](TASKS-AND-IMPROVEMENTS.md#preview-and-unresolved-decisions).
+- **Open decisions.** The supplied M1 visual direction is recorded under M1 frontend implementation. The verification browser and version, preview command, desktop and narrow verification widths, backend approach and Pages deployment method remain undecided. Record the chosen preview directory, port, bind address and URL when defined. Persistence, hosting and Pages timing depend on the workflow or preview scope the owner selects. [Preview and unresolved decisions](TASKS-AND-IMPROVEMENTS.md#preview-and-unresolved-decisions).
 - **Existing outcomes.** Environment and preview cover the applicable subset of POS-005. M1 covers the first slice of POS-006 and relevant POS-004 and POS-005 work. Pages delivery maps to POS-007. Map any backend work to the workflow it supports, including POS-008 or POS-009 where saving or recovery actually requires it. POS-010 covers review of the combined first functional workflow. Checklist identifiers such as `ENV-01.1`, `M1-01.1`, `BE-01.1` and `PAGE-01.1` are local to this document. Preserve them in later updates and use existing POS IDs for cross-references. [Existing outcome details](TASKS-AND-IMPROVEMENTS.md#entry-details-and-evidence).
 
 ## 3. Completion and evidence rules
@@ -76,6 +76,12 @@ Use this checklist to order implementation, verify running results and reference
 
 Recheck structural steps where newly connected interactions affect them. Demonstrate behavior in the running application after wiring it up. Structural implementation alone does not satisfy the behavior checks.
 
+### Visual direction for M1
+
+**Reference evidence.** Codex's earlier rendered Chrome inspection of the supplied mock at 1440 × 900 and 768 × 860 showed a vivid wallpaper behind a slim bar, a translucent dock and dark framed panels. At the narrow width, parts of the right rail and dock clipped. That inspection describes the reference. Verify the Personal OS implementation separately through the running checks below.
+
+Carry the color, typography and surface treatment into the Workspace → Notes → Workspace journey using original styling. Keep the mock HTML, screenshots, embedded libraries and reference assets outside the repository. M1 excludes simulated browser chrome, widgets, command search, extra apps, profile or status controls without implemented behavior, minimizing, dragging, application-window resizing and general window management. Include only working controls.
+
 ### M1-01 — Browser entry point
 
 **Expected result.** A valid page runs over HTTP.
@@ -92,11 +98,11 @@ Recheck structural steps where newly connected interactions affect them. Demonst
 **Expected result.** Shared styling is consistent across the rendered application.
 
 - [ ] Accept the M1-02 result.
-  - [ ] M1-02.1 Define variables for surfaces, text, accents, borders, focus, spacing and radii.
-  - [ ] M1-02.2 Establish system typography, headings and line heights.
+  - [ ] M1-02.1 Define shared variables for deep navy surfaces, near-white text, muted blue-gray secondary text, a warm yellow or amber Notes accent, borders, focus, spacing and radii.
+  - [ ] M1-02.2 Use compact system sans-serif typography with a clear hierarchy for headings and secondary text and readable line heights.
   - [ ] M1-02.3 Establish consistent sizing rules.
-  - [ ] M1-02.4 Define shared button hover, active and focus states.
-  - [ ] M1-02.5 Check readable contrast and usable control sizes.
+  - [ ] M1-02.4 Define shared hover and pressed states for buttons and a clearly visible keyboard focus treatment.
+  - [ ] M1-02.5 Check text and focus contrast over the wallpaper and verify usable control sizes. Provide a sufficiently opaque fallback for translucent surfaces.
   - [ ] M1-02.6 Evaluate the visual foundations in actual application components.
 
 ### M1-03 — Application structure
@@ -104,9 +110,9 @@ Recheck structural steps where newly connected interactions affect them. Demonst
 **Expected result.** Workspace and Notes share a stable outer structure.
 
 - [ ] Accept the M1-03 result.
-  - [ ] M1-03.1 Add Personal OS identity, navigation and main content.
+  - [ ] M1-03.1 Add a slim top bar that shows Personal OS identity and Workspace context. Include the working navigation and main content.
   - [ ] M1-03.2 Create distinct Workspace and Notes containers.
-  - [ ] M1-03.3 Define layout, scrolling and regions that remain visible across views.
+  - [ ] M1-03.3 Define the shared layout and scrolling. Keep the top bar and wallpaper present across views.
   - [ ] M1-03.4 Establish semantic headings and landmarks.
 
 ### M1-04 — Workspace home
@@ -114,10 +120,10 @@ Recheck structural steps where newly connected interactions affect them. Demonst
 **Expected result.** Workspace is a clear starting screen with Notes as its available application.
 
 - [ ] Accept the M1-04 result.
-  - [ ] M1-04.1 Add the Workspace heading and launcher area.
-  - [ ] M1-04.2 Place Notes in the launcher area.
+  - [ ] M1-04.1 Add the Workspace heading and a compact, centered, translucent dock-like launcher tray.
+  - [ ] M1-04.2 Place only the Notes launcher in the tray.
   - [ ] M1-04.3 Add only the explanatory text needed to use the screen.
-  - [ ] M1-04.4 Balance the layout for one application.
+  - [ ] M1-04.4 Use an original cobalt and indigo wallpaper with broad, soft violet and magenta accents. Leave open space around the single launcher.
   - [ ] M1-04.5 Check that the screen excludes invented activity, files, accounts and statistics.
 
 ### M1-05 — Notes launcher
@@ -125,9 +131,9 @@ Recheck structural steps where newly connected interactions affect them. Demonst
 **Expected result.** The Notes launcher is an accessible application entry point.
 
 - [ ] Accept the M1-05 result.
-  - [ ] M1-05.1 Use a native button that visibly identifies Notes.
+  - [ ] M1-05.1 Use a native button with a visible Notes label and the warm Notes accent.
   - [ ] M1-05.2 Give the button an accessible name that identifies Notes.
-  - [ ] M1-05.3 Implement hover, pressed and visible focus treatments.
+  - [ ] M1-05.3 Apply the shared hover, pressed and visible focus treatments to the Notes launcher.
   - [ ] M1-05.4 Make the intended launcher area clickable.
   - [ ] M1-05.5 Verify keyboard reachability and activation after connecting launch behavior in M1-09.
 
@@ -140,7 +146,7 @@ Recheck structural steps where newly connected interactions affect them. Demonst
   - [ ] M1-06.2 Define Workspace and Notes view names.
   - [ ] M1-06.3 Implement one view-switching mechanism.
   - [ ] M1-06.4 Update view visibility, navigation indication and focus on each switch.
-  - [ ] M1-06.5 Prevent inactive content from receiving keyboard focus.
+  - [ ] M1-06.5 Keep inactive view content out of the tab order in both directions.
   - [ ] M1-06.6 Handle repeated navigation without duplicate content or handlers.
   - [ ] M1-06.7 Keep navigation free of a general router or framework.
 
@@ -149,20 +155,20 @@ Recheck structural steps where newly connected interactions affect them. Demonst
 **Expected result.** Notes has a recognizable application surface for the empty view.
 
 - [ ] Accept the M1-07 result.
-  - [ ] M1-07.1 Add the Notes heading and return navigation.
+  - [ ] M1-07.1 Add a compact Notes header with a heading and a native Back to Workspace button.
   - [ ] M1-07.2 Define the future note-list and document regions.
   - [ ] M1-07.3 Establish desktop proportions.
   - [ ] M1-07.4 Provide the empty layout without editing behavior.
-  - [ ] M1-07.5 Keep Notes-specific styling distinct from Workspace styling.
+  - [ ] M1-07.5 Style Notes as a dark, rounded surface with a fine border, a divider below the header and a soft shadow.
 
 ### M1-08 — Empty state
 
 **Expected result.** The Notes view clearly communicates its empty state and available actions.
 
 - [ ] Accept the M1-08 result.
-  - [ ] M1-08.1 Communicate that no notes exist.
+  - [ ] M1-08.1 Use an accurate empty-state message such as “No notes yet.”
   - [ ] M1-08.2 Add brief, accurate supporting text.
-  - [ ] M1-08.3 Refine alignment and spacing.
+  - [ ] M1-08.3 Give the empty state generous spacing and clear alignment beneath the Notes header.
   - [ ] M1-08.4 Check that the content and layout convey the actual capabilities of the view.
   - [ ] M1-08.5 Omit nonfunctional creation, saving and export controls.
   - [ ] M1-08.6 Check readability at narrow width and increased zoom.
@@ -175,7 +181,7 @@ Recheck structural steps where newly connected interactions affect them. Demonst
   - [ ] M1-09.1 Connect the launcher to the view-switching mechanism.
   - [ ] M1-09.2 Show Notes and hide Workspace content on launch.
   - [ ] M1-09.3 Update any active navigation indication.
-  - [ ] M1-09.4 Move focus to an appropriate destination in Notes.
+  - [ ] M1-09.4 Move focus to the Notes heading when Notes opens.
   - [ ] M1-09.5 Keep programmatic focus targets out of the normal tab order where appropriate.
   - [ ] M1-09.6 Verify equivalent pointer and keyboard activation.
 
@@ -184,7 +190,7 @@ Recheck structural steps where newly connected interactions affect them. Demonst
 **Expected result.** Returning from Notes restores Workspace and launcher focus reliably.
 
 - [ ] Accept the M1-10 result.
-  - [ ] M1-10.1 Connect return navigation to the view-switching mechanism.
+  - [ ] M1-10.1 Connect Back to Workspace to the view-switching mechanism.
   - [ ] M1-10.2 Restore Workspace and clear stale navigation indications.
   - [ ] M1-10.3 Restore focus to the Notes launcher.
   - [ ] M1-10.4 Reuse the existing content and handlers on return.
@@ -197,7 +203,7 @@ Recheck structural steps where newly connected interactions affect them. Demonst
 - [ ] Accept the M1-11 result.
   - [ ] M1-11.1 Check forward and reverse tab order.
   - [ ] M1-11.2 Launch Notes with Enter and Space.
-  - [ ] M1-11.3 Check Notes navigation and focus after returning to Workspace.
+  - [ ] M1-11.3 Verify that keyboard launch focuses the Notes heading and that Back to Workspace restores focus to the launcher.
   - [ ] M1-11.4 Confirm hidden controls are unreachable by keyboard.
   - [ ] M1-11.5 Remove unnecessary custom keyboard handling and positive `tabindex` values.
   - [ ] M1-11.6 Check visible focus across surfaces.
@@ -208,10 +214,10 @@ Recheck structural steps where newly connected interactions affect them. Demonst
 
 - [ ] Accept the M1-12 result.
   - [ ] M1-12.1 Inspect both selected verification widths.
-  - [ ] M1-12.2 Adjust padding, navigation and launcher placement as needed.
-  - [ ] M1-12.3 Adapt Notes regions to the available width.
-  - [ ] M1-12.4 Prevent overlap and unnecessary horizontal scrolling.
-  - [ ] M1-12.5 Keep content reachable at reduced viewport heights.
+  - [ ] M1-12.2 Adapt the top bar and launcher tray to the available width with consistent page gutters.
+  - [ ] M1-12.3 Fit the Notes surface and its regions to the available width within those gutters.
+  - [ ] M1-12.4 Prevent the bar, tray and Notes surface from clipping or overlapping, and avoid unnecessary horizontal scrolling.
+  - [ ] M1-12.5 Keep both views and Back to Workspace reachable through appropriate vertical scrolling at reduced heights.
   - [ ] M1-12.6 Resize while each view is open.
 
 ### M1-13 — Accessibility and interaction finish
@@ -246,7 +252,7 @@ Recheck structural steps where newly connected interactions affect them. Demonst
   - [ ] M1-15.1 Start from a fresh load.
   - [ ] M1-15.2 Complete the pointer and keyboard-only journeys.
   - [ ] M1-15.3 Repeat both journeys at both verification widths.
-  - [ ] M1-15.4 Inspect typography, spacing, alignment, focus and empty-state balance.
+  - [ ] M1-15.4 At both verification widths, inspect the wallpaper, palette, typography, bar, tray, Notes framing and empty-state spacing and alignment. Verify contrast with the opaque fallback, visible focus and layout fit through both journeys.
   - [ ] M1-15.5 Correct issues within the authorized file and task scope.
   - [ ] M1-15.6 Repeat checks affected by corrections.
   - [ ] M1-15.7 Record the environment, serving method, viewport sizes, results and limitations.
